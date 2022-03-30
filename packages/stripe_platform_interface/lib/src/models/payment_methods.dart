@@ -1,8 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
-
-import 'address.dart';
-import 'payment_intents.dart';
+import 'package:stripe_platform_interface/stripe_platform_interface.dart';
 
 part 'payment_methods.freezed.dart';
 part 'payment_methods.g.dart';
@@ -25,7 +22,7 @@ class PaymentMethod with _$PaymentMethod {
     required String type,
 
     /// Billing information related to the payment method.
-    required BillingDetails billingDetails,
+    @BillingDetailsConverter() required BillingDetails billingDetails,
 
     /// Containing additional data in case paymentmethod type is card.
     @JsonKey(name: 'Card') required Card card,
@@ -69,7 +66,7 @@ class PaymentMethod with _$PaymentMethod {
 /// Billing information associated with the payment method.
 @freezed
 class BillingDetails with _$BillingDetails {
-  @JsonSerializable(explicitToJson: true)
+  @JsonSerializable()
   const factory BillingDetails({
     /// Email address.
     String? email,
@@ -83,8 +80,38 @@ class BillingDetails with _$BillingDetails {
     /// Full name.
     String? name,
   }) = _BillingDetails;
+
   factory BillingDetails.fromJson(Map<String, dynamic> json) =>
       _$BillingDetailsFromJson(json);
+}
+
+class BillingDetailsConverter
+    implements JsonConverter<BillingDetails?, Map<String, dynamic>?> {
+  const BillingDetailsConverter();
+
+  @override
+  BillingDetails? fromJson(Map<String, dynamic>? json) {
+    // type data was already set (e.g. because we serialized it ourselves)
+    if (json != null) {
+      return BillingDetails(
+        email: json['email'] as String?,
+        address: json['address'] == null
+            ? null
+            : Address.fromJson(json['address'] as Map<String, dynamic>),
+        phone: json['phone'] as String?,
+        name: json['name'] as String?,
+      );
+    }
+    return null;
+  }
+
+  @override
+  Map<String, dynamic>? toJson(BillingDetails? data) {
+    if (data == null) {
+      return null;
+    }
+    return data.toJsonFlattend();
+  }
 }
 
 @freezed
@@ -100,7 +127,7 @@ class AuBecsDebit with _$AuBecsDebit {
     /// Last 4 digits of the bankaccount number.
     String? last4,
 
-    /// Siz digit number identifying the bank or branch for this account.
+    /// Six digit number identifying the bank or branch for this account.
     String? bsbNumber,
   }) = _AuBecsDebit;
 
@@ -258,6 +285,7 @@ enum PaymentMethodType {
   Oxxo,
   Sofort,
   Upi,
+  // WeChatPay,
   Unknown
 }
 
@@ -275,8 +303,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
     PaymentIntentsFutureUsage? setupFutureUsage,
 
     /// Billing information.
-
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsCard;
 
   @JsonSerializable(explicitToJson: true)
@@ -316,11 +343,23 @@ class PaymentMethodParams with _$PaymentMethodParams {
   const factory PaymentMethodParams.ideal({
     /// Billing information.
 
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
 
     /// The name of bank.
     String? bankName,
   }) = _PaymentMethodParamsIdeal;
+
+  @JsonSerializable(explicitToJson: true)
+  @FreezedUnionValue('AuBecsDebit')
+
+  /// Config parameters for aubecs debit payment method.
+  const factory PaymentMethodParams.aubecs({
+    /// form input details
+    required AubecsFormInputDetails formDetails,
+
+    /// Billing information.
+    @BillingDetailsConverter() BillingDetails? billingDetails,
+  }) = _PaymentMethodParamsAubecs;
 
   @JsonSerializable(explicitToJson: true)
   @FreezedUnionValue('Bancontact')
@@ -330,7 +369,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
   const factory PaymentMethodParams.bancontact({
     /// Billing information.
 
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsBankContact;
 
   @JsonSerializable(explicitToJson: true)
@@ -341,7 +380,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
   const factory PaymentMethodParams.giroPay({
     /// Billing information.
 
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsGiroPay;
 
   @JsonSerializable(explicitToJson: true)
@@ -352,7 +391,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
   const factory PaymentMethodParams.eps({
     /// Billing information.
 
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsEps;
 
   @JsonSerializable(explicitToJson: true)
@@ -363,7 +402,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
   const factory PaymentMethodParams.grabPay({
     /// Billing information.
 
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsPay;
 
   @JsonSerializable(explicitToJson: true)
@@ -374,7 +413,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
   const factory PaymentMethodParams.p24({
     /// Billing information.
 
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsP24;
 
   @JsonSerializable(explicitToJson: true)
@@ -390,7 +429,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
     PaymentIntentsFutureUsage? setupFutureUsage,
 
     /// Billing information.
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsSepaDebit;
 
   @JsonSerializable(explicitToJson: true)
@@ -400,7 +439,7 @@ class PaymentMethodParams with _$PaymentMethodParams {
     PaymentIntentsFutureUsage? setupFutureUsage,
 
     /// Billing information.
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsSofort;
 
   @JsonSerializable(explicitToJson: true)
@@ -409,16 +448,47 @@ class PaymentMethodParams with _$PaymentMethodParams {
     required ShippingDetails shippingDetails,
 
     /// Billing information.
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsAfterpayClearpay;
 
   @JsonSerializable(explicitToJson: true)
   @FreezedUnionValue('Oxxo')
   const factory PaymentMethodParams.oxxo({
     /// Billing information.
-    BillingDetails? billingDetails,
+    @BillingDetailsConverter() BillingDetails? billingDetails,
   }) = _PaymentMethodParamsOxxo;
+
+  @JsonSerializable(explicitToJson: true)
+  @FreezedUnionValue('Klarna')
+  const factory PaymentMethodParams.klarna({
+    /// Billing information.
+    ///
+    /// Make sure to add an email and country (part of the address)
+    /// which is required for using Klarna.
+    @BillingDetailsConverter() BillingDetails? billingDetails,
+  }) = _PaymentMethodParamsKlarna;
+
+  // TODO uncomment and regenerate when we can re-enable wechat pay
+  // @JsonSerializable(explicitToJson: true)
+  // @FreezedUnionValue('WeChatPay')
+  //  const factory PaymentMethodParams.weChatPay({
+  //   String? appId,
+  // }) = _PaymentMethodParamsWechat;
 
   factory PaymentMethodParams.fromJson(Map<String, dynamic> json) =>
       _$PaymentMethodParamsFromJson(json);
+}
+
+extension _BillingDetailsExtension on BillingDetails {
+  Map<String, dynamic> toJsonFlattend() => {
+        'email': email,
+        'phone': phone,
+        'name': name,
+        'addressLine1': address?.line1,
+        'addressLine2': address?.line2,
+        'addressPostalCode': address?.postalCode,
+        'addressCity': address?.city,
+        'addressState': address?.state,
+        'addressCountry': address?.country,
+      };
 }

@@ -2,10 +2,10 @@ package com.reactnativestripesdk
 
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
-import com.stripe.android.exception.APIException
+import com.stripe.android.core.exception.APIException
 import com.stripe.android.exception.AuthenticationException
 import com.stripe.android.exception.CardException
-import com.stripe.android.exception.InvalidRequestException
+import com.stripe.android.core.exception.InvalidRequestException
 import com.stripe.android.model.PaymentIntent
 import com.stripe.android.model.SetupIntent
 
@@ -35,6 +35,10 @@ enum class RetrieveSetupIntentErrorType {
 
 enum class PaymentSheetErrorType {
   Failed, Canceled
+}
+
+enum class GooglePayErrorType {
+  Failed, Canceled, Unknown
 }
 
 internal fun mapError(code: String, message: String?, localizedMessage: String?, declineCode: String?, type: String?, stripeErrorCode: String?): WritableMap {

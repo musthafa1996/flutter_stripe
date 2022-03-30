@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer' as dev;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -6,15 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:stripe_platform_interface/stripe_platform_interface.dart';
-
-import 'card_edit_controller.dart';
-import 'card_edit_event.dart';
 
 /// Customizable form that collects card information.
 class CardField extends StatefulWidget {
   const CardField(
-      {required this.onCardChanged,
+      {this.onCardChanged,
       Key? key,
       this.onFocus,
       this.decoration,
@@ -22,6 +18,7 @@ class CardField extends StatefulWidget {
       this.style,
       this.autofocus = false,
       this.dangerouslyGetFullCardDetails = false,
+      this.dangerouslyUpdateFullCardDetails = false,
       this.cursorColor,
       this.numberHintText,
       this.expirationHintText,
@@ -37,7 +34,7 @@ class CardField extends StatefulWidget {
   final CardFocusCallback? onFocus;
 
   /// Callback that will be executed when the card information changes.
-  final CardChangedCallback onCardChanged;
+  final CardChangedCallback? onCardChanged;
 
   /// Textstyle of the card input fields.
   final TextStyle? style;
@@ -46,7 +43,10 @@ class CardField extends StatefulWidget {
   final Color? cursorColor;
 
   /// Whether or not to show the postalcode field in the form.
-  /// Defaults is `false`.
+  ///
+  /// Defaults is `false`. If your configuration in Stripe requires a postalcode
+  /// check as defined in https://stripe.com/docs/radar/rules#traditional-bank-checks
+  /// make sure this one is set to `true`.
   final bool enablePostalCode;
 
   /// Hint text for the card number field.
@@ -78,6 +78,14 @@ class CardField extends StatefulWidget {
   /// Default is `false`.
   final bool dangerouslyGetFullCardDetails;
 
+  /// When true, card data can be edited programatically.
+  ///
+  /// WARNING!!! Handling card data manually will break PCI compliance provided by Stripe.
+  /// 'Please make sure you understand the severe consecuences of it.'
+  //  'https://stripe.com/docs/security/guide#validating-pci-compliance'
+  /// Default is `false`.
+  final bool dangerouslyUpdateFullCardDetails;
+
   @override
   _CardFieldState createState() => _CardFieldState();
 }
@@ -86,12 +94,16 @@ class _CardFieldState extends State<CardField> {
   final FocusNode _node =
       FocusNode(debugLabel: 'CardField', descendantsAreFocusable: false);
 
-  late CardEditController controller;
+  CardEditController? _fallbackContoller;
+  CardEditController get controller {
+    if (widget.controller != null) return widget.controller!;
+    _fallbackContoller ??= CardEditController();
+    return _fallbackContoller!;
+  }
 
   @override
   void initState() {
     _node.addListener(updateState);
-    controller = widget.controller ?? CardEditController();
     super.initState();
   }
 
@@ -101,12 +113,14 @@ class _CardFieldState extends State<CardField> {
       ..removeListener(updateState)
       ..dispose();
 
-    controller.dispose();
+    _fallbackContoller?.dispose();
     super.dispose();
   }
 
   void updateState() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -121,31 +135,51 @@ class _CardFieldState extends State<CardField> {
     const platformMargin = EdgeInsets.fromLTRB(12, 10, 10, 12);
 
     final cardHeight = platformCardHeight - platformMargin.vertical;
+
+    final placeholder = CardPlaceholder(
+      number: widget.numberHintText,
+      expiration: widget.expirationHintText,
+      cvc: widget.cvcHintText,
+      postalCode: widget.postalCodeHintText,
+    );
+
+    final _platform = kIsWeb
+        ? Stripe.buildWebCard(
+            controller: controller,
+            height: platformCardHeight,
+            focusNode: _node,
+            onCardChanged: widget.onCardChanged,
+            enablePostalCode: widget.enablePostalCode,
+            autofocus: widget.autofocus,
+            onFocus: widget.onFocus,
+            placeholder: placeholder,
+            style: style,
+          )
+        : CustomSingleChildLayout(
+            delegate: const _NegativeMarginLayout(margin: platformMargin),
+            child: _MethodChannelCardField(
+              controller: controller,
+              height: platformCardHeight,
+              focusNode: _node,
+              style: style,
+              placeholder: placeholder,
+              enablePostalCode: widget.enablePostalCode,
+              dangerouslyGetFullCardDetails:
+                  widget.dangerouslyGetFullCardDetails,
+              dangerouslyUpdateFullCardDetails:
+                  widget.dangerouslyUpdateFullCardDetails,
+              onCardChanged: widget.onCardChanged,
+              autofocus: widget.autofocus,
+              onFocus: widget.onFocus,
+            ),
+          );
     return InputDecorator(
       isFocused: _node.hasFocus,
       decoration: inputDecoration,
       baseStyle: widget.style,
       child: SizedBox(
         height: cardHeight,
-        child: CustomSingleChildLayout(
-          delegate: const _NegativeMarginLayout(margin: platformMargin),
-          child: _MethodChannelCardField(
-            height: platformCardHeight,
-            focusNode: _node,
-            controller: controller,
-            style: style,
-            placeholder: CardPlaceholder(
-              number: widget.numberHintText,
-              expiration: widget.expirationHintText,
-              cvc: widget.cvcHintText,
-              postalCode: widget.postalCodeHintText,
-            ),
-            enablePostalCode: widget.enablePostalCode,
-            onCardChanged: widget.onCardChanged,
-            autofocus: widget.autofocus,
-            onFocus: widget.onFocus,
-          ),
-        ),
+        child: _platform,
       ),
     );
   }
@@ -161,9 +195,11 @@ class _CardFieldState extends State<CardField> {
         Theme.of(context).textTheme.subtitle1?.fontSize ??
         kCardFieldDefaultFontSize;
 
-    final fontFamily = widget.style?.fontFamily ??
-        Theme.of(context).textTheme.subtitle1?.fontFamily ??
-        kCardFieldDefaultFontFamily;
+    // Flutter fonts need to be loaded in the native framework to work
+    // As this is not automatic, default fonts are omitted
+    final fontFamily = widget.style?.fontFamily;
+    //  Theme.of(context).textTheme.subtitle1?.fontFamily ??
+    //  kCardFieldDefaultFontFamily;
 
     return CardStyle(
       textColor: widget.style?.color,
@@ -205,7 +241,7 @@ class _NegativeMarginLayout extends SingleChildLayoutDelegate {
 
 class _MethodChannelCardField extends StatefulWidget {
   _MethodChannelCardField({
-    required this.onCardChanged,
+    this.onCardChanged,
     required this.controller,
     Key? key,
     this.onFocus,
@@ -216,6 +252,8 @@ class _MethodChannelCardField extends StatefulWidget {
     double? height = kCardFieldDefaultHeight,
     BoxConstraints? constraints,
     this.focusNode,
+    this.dangerouslyGetFullCardDetails = false,
+    this.dangerouslyUpdateFullCardDetails = false,
     this.autofocus = false,
   })  : assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -226,13 +264,15 @@ class _MethodChannelCardField extends StatefulWidget {
 
   final BoxConstraints? constraints;
   final CardFocusCallback? onFocus;
-  final CardChangedCallback onCardChanged;
+  final CardChangedCallback? onCardChanged;
   final CardStyle? style;
   final CardPlaceholder? placeholder;
   final bool enablePostalCode;
   final FocusNode? focusNode;
   final bool autofocus;
   final CardEditController controller;
+  final bool dangerouslyGetFullCardDetails;
+  final bool dangerouslyUpdateFullCardDetails;
 
   // This is used in the platform side to register the view.
   static const _viewType = 'flutter.stripe/card_field';
@@ -247,7 +287,8 @@ class _MethodChannelCardField extends StatefulWidget {
   _MethodChannelCardFieldState createState() => _MethodChannelCardFieldState();
 }
 
-class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
+class _MethodChannelCardFieldState extends State<_MethodChannelCardField>
+    with CardFieldContext {
   MethodChannel? _methodChannel;
 
   final _focusNode =
@@ -268,7 +309,7 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
           baseTextStyle?.color ??
           kCardFieldDefaultTextColor,
       fontSize: baseTextStyle?.fontSize ?? kCardFieldDefaultFontSize,
-      fontFamily: baseTextStyle?.fontFamily ?? kCardFieldDefaultFontFamily,
+      // fontFamily: baseTextStyle?.fontFamily ?? kCardFieldDefaultFontFamily,
       textErrorColor:
           theme.inputDecorationTheme.errorStyle?.color ?? theme.errorColor,
       placeholderColor:
@@ -284,19 +325,33 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
         cvc: 'CVC',
       ).apply(placeholder);
 
+  CardEditController get controller => widget.controller;
+
   @override
   void initState() {
-    widget.controller.addListener(() {
-      _handleCardEditEvent(widget.controller.value);
-    });
+    attachController(controller);
+    // Reset card fields if dangerouslyUpdateFullCardDetails is false
+    if (!widget.dangerouslyUpdateFullCardDetails) {
+      if (kDebugMode &&
+          controller.details != const CardFieldInputDetails(complete: false)) {
+        dev.log('WARNING! Initial card data value has been ignored. \n'
+            '$kDebugPCIMessage');
+      }
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        updateCardDetails(
+          const CardFieldInputDetails(complete: false),
+          controller,
+        );
+      });
+    }
+
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(() {
-      _handleCardEditEvent(widget.controller.value);
-    });
+    detachController(controller);
+
     _focusNode.dispose();
     super.dispose();
   }
@@ -310,6 +365,11 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
       'cardStyle': style.toJson(),
       'placeholder': placeholder.toJson(),
       'postalCodeEnabled': widget.enablePostalCode,
+      'dangerouslyGetFullCardDetails': widget.dangerouslyGetFullCardDetails,
+      if (widget.dangerouslyUpdateFullCardDetails &&
+          controller.initalDetails != null)
+        'cardDetails': controller.initalDetails?.toJson(),
+      'autofocus': widget.autofocus,
     };
 
     Widget platform;
@@ -321,11 +381,24 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
         onPlatformViewCreated: onPlatformViewCreated,
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      platform = _UiKitCardField(
-        key: _MethodChannelCardField._key,
-        viewType: _MethodChannelCardField._viewType,
-        creationParams: creationParams,
-        onPlatformViewCreated: onPlatformViewCreated,
+      platform = Listener(
+        onPointerDown: (_) {
+          if (!_effectiveNode.hasFocus) {
+            _effectiveNode.requestFocus();
+          }
+        },
+        child: Focus(
+          autofocus: widget.autofocus,
+          descendantsAreFocusable: true,
+          focusNode: _effectiveNode,
+          onFocusChange: _handleFrameworkFocusChanged,
+          child: _UiKitCardField(
+            key: _MethodChannelCardField._key,
+            viewType: _MethodChannelCardField._viewType,
+            creationParams: creationParams,
+            onPlatformViewCreated: onPlatformViewCreated,
+          ),
+        ),
       );
     } else {
       throw UnsupportedError('Unsupported platform view');
@@ -333,22 +406,9 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
     final constraints = widget.constraints ??
         const BoxConstraints.expand(height: kCardFieldDefaultHeight);
 
-    return Listener(
-      onPointerDown: (_) {
-        if (!_effectiveNode.hasFocus) {
-          _effectiveNode.requestFocus();
-        }
-      },
-      child: Focus(
-        autofocus: true,
-        descendantsAreFocusable: false,
-        focusNode: _effectiveNode,
-        onFocusChange: _handleFrameworkFocusChanged,
-        child: ConstrainedBox(
-          constraints: constraints,
-          child: platform,
-        ),
-      ),
+    return ConstrainedBox(
+      constraints: constraints,
+      child: platform,
     );
   }
 
@@ -367,9 +427,21 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
 
   @override
   void didUpdateWidget(covariant _MethodChannelCardField oldWidget) {
+    if (widget.controller != oldWidget.controller) {
+      assert(!controller.hasCardField,
+          'CardEditController is already attached to a CardView');
+      detachController(oldWidget.controller);
+      attachController(oldWidget.controller);
+    }
     if (widget.enablePostalCode != oldWidget.enablePostalCode) {
       _methodChannel?.invokeMethod('onPostalCodeEnabledChanged', {
         'postalCodeEnabled': widget.enablePostalCode,
+      });
+    }
+    if (widget.dangerouslyGetFullCardDetails !=
+        oldWidget.dangerouslyGetFullCardDetails) {
+      _methodChannel?.invokeMethod('dangerouslyGetFullCardDetails', {
+        'dangerouslyGetFullCardDetails': widget.dangerouslyGetFullCardDetails,
       });
     }
     _lastStyle ??= resolveStyle(oldWidget.style);
@@ -406,10 +478,12 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
     try {
       final map = Map<String, dynamic>.from(arguments);
       final details = CardFieldInputDetails.fromJson(map);
-      widget.onCardChanged.call(details);
+      updateCardDetails(details, controller);
+      widget.onCardChanged?.call(details);
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      log('An error ocurred while while parsing card arguments, this should not happen, please consider creating an issue at https://github.com/flutter-stripe/flutter_stripe/issues/new');
+      dev.log(
+          'An error ocurred while while parsing card arguments, this should not happen, please consider creating an issue at https://github.com/flutter-stripe/flutter_stripe/issues/new');
       rethrow;
     }
   }
@@ -427,31 +501,9 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
       widget.onFocus?.call(field.focusedField);
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      log('An error ocurred while while parsing card arguments, this should not happen, please consider creating an issue at https://github.com/flutter-stripe/flutter_stripe/issues/new');
+      dev.log(
+          'An error ocurred while while parsing card arguments, this should not happen, please consider creating an issue at https://github.com/flutter-stripe/flutter_stripe/issues/new');
       rethrow;
-    }
-  }
-
-  /// handle event that is emitted from the editting controller and propagate it
-  /// through native
-  ///
-  void _handleCardEditEvent(CardEditEvent event) {
-    if (_methodChannel == null) {
-      return;
-    } else {
-      switch (event) {
-        case CardEditEvent.none:
-          break;
-        case CardEditEvent.focus:
-          _methodChannel!.invokeMethod('focus');
-          break;
-        case CardEditEvent.blur:
-          _methodChannel!.invokeMethod('blur');
-          break;
-        case CardEditEvent.clear:
-          _methodChannel!.invokeMethod('clear');
-          break;
-      }
     }
   }
 
@@ -462,13 +514,38 @@ class _MethodChannelCardFieldState extends State<_MethodChannelCardField> {
     if (methodChannel == null) {
       return;
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
     if (!isFocused) {
-      methodChannel.invokeMethod('blur');
+      blur();
       return;
     }
 
-    methodChannel.invokeMethod('focus');
+    focus();
+  }
+
+  @override
+  void blur() {
+    _methodChannel?.invokeMethod('blur');
+  }
+
+  @override
+  void clear() {
+    _methodChannel?.invokeMethod('clear');
+  }
+
+  @override
+  void focus() {
+    _methodChannel?.invokeMethod('focus');
+  }
+
+  @override
+  void dangerouslyUpdateCardDetails(CardFieldInputDetails details) {
+    assert(widget.dangerouslyUpdateFullCardDetails, kDebugPCIMessage);
+    _methodChannel?.invokeMethod('dangerouslyUpdateCardDetails', {
+      'cardDetails': details.toJson(),
+    });
   }
 }
 
@@ -503,6 +580,9 @@ class _AndroidCardField extends StatelessWidget {
           layoutDirection: Directionality.of(context),
           creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
+          onFocus: () {
+            params.onFocusChanged(true);
+          },
         )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
@@ -538,6 +618,3 @@ const kCardFieldDefaultHeight = 48.0;
 const kCardFieldDefaultFontSize = 17.0;
 const kCardFieldDefaultTextColor = Colors.black;
 const kCardFieldDefaultFontFamily = 'Roboto';
-
-typedef CardChangedCallback = void Function(CardFieldInputDetails? details);
-typedef CardFocusCallback = void Function(CardFieldName? focusedField);

@@ -1,5 +1,7 @@
+// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
 part of 'create_token_data.dart';
 
@@ -13,21 +15,47 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 CreateTokenParams _$CreateTokenParamsFromJson(Map<String, dynamic> json) {
-  return _CreateTokenParams.fromJson(json);
+  switch (json['runtimeType']) {
+    case 'default':
+      return _CreateTokenParamsLegacy.fromJson(json);
+    case 'card':
+      return _CreateTokenParamsCard.fromJson(json);
+    case 'bankAccount':
+      return _CreateTokenParamsBankAccount.fromJson(json);
+
+    default:
+      throw CheckedFromJsonException(json, 'runtimeType', 'CreateTokenParams',
+          'Invalid union type "${json['runtimeType']}"!');
+  }
 }
 
 /// @nodoc
 class _$CreateTokenParamsTearOff {
   const _$CreateTokenParamsTearOff();
 
-  _CreateTokenParams call({TokenType type = TokenType.Card, Address? address}) {
-    return _CreateTokenParams(
+  _CreateTokenParamsLegacy call(
+      {TokenType type = TokenType.Card, String? name, Address? address}) {
+    return _CreateTokenParamsLegacy(
       type: type,
+      name: name,
       address: address,
     );
   }
 
-  CreateTokenParams fromJson(Map<String, Object> json) {
+  _CreateTokenParamsCard card({required CardTokenParams params}) {
+    return _CreateTokenParamsCard(
+      params: params,
+    );
+  }
+
+  _CreateTokenParamsBankAccount bankAccount(
+      {required BankAccountTokenParams params}) {
+    return _CreateTokenParamsBankAccount(
+      params: params,
+    );
+  }
+
+  CreateTokenParams fromJson(Map<String, Object?> json) {
     return CreateTokenParams.fromJson(json);
   }
 }
@@ -37,16 +65,53 @@ const $CreateTokenParams = _$CreateTokenParamsTearOff();
 
 /// @nodoc
 mixin _$CreateTokenParams {
-  /// Type of token.
-  TokenType get type => throw _privateConstructorUsedError;
-
-  /// Additional address details
-  Address? get address => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $CreateTokenParamsCopyWith<CreateTokenParams> get copyWith =>
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address) $default, {
+    required TResult Function(CardTokenParams params) card,
+    required TResult Function(BankAccountTokenParams params) bankAccount,
+  }) =>
       throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value) $default, {
+    required TResult Function(_CreateTokenParamsCard value) card,
+    required TResult Function(_CreateTokenParamsBankAccount value) bankAccount,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -54,9 +119,6 @@ abstract class $CreateTokenParamsCopyWith<$Res> {
   factory $CreateTokenParamsCopyWith(
           CreateTokenParams value, $Res Function(CreateTokenParams) then) =
       _$CreateTokenParamsCopyWithImpl<$Res>;
-  $Res call({TokenType type, Address? address});
-
-  $AddressCopyWith<$Res>? get address;
 }
 
 /// @nodoc
@@ -67,17 +129,45 @@ class _$CreateTokenParamsCopyWithImpl<$Res>
   final CreateTokenParams _value;
   // ignore: unused_field
   final $Res Function(CreateTokenParams) _then;
+}
+
+/// @nodoc
+abstract class _$CreateTokenParamsLegacyCopyWith<$Res> {
+  factory _$CreateTokenParamsLegacyCopyWith(_CreateTokenParamsLegacy value,
+          $Res Function(_CreateTokenParamsLegacy) then) =
+      __$CreateTokenParamsLegacyCopyWithImpl<$Res>;
+  $Res call({TokenType type, String? name, Address? address});
+
+  $AddressCopyWith<$Res>? get address;
+}
+
+/// @nodoc
+class __$CreateTokenParamsLegacyCopyWithImpl<$Res>
+    extends _$CreateTokenParamsCopyWithImpl<$Res>
+    implements _$CreateTokenParamsLegacyCopyWith<$Res> {
+  __$CreateTokenParamsLegacyCopyWithImpl(_CreateTokenParamsLegacy _value,
+      $Res Function(_CreateTokenParamsLegacy) _then)
+      : super(_value, (v) => _then(v as _CreateTokenParamsLegacy));
+
+  @override
+  _CreateTokenParamsLegacy get _value =>
+      super._value as _CreateTokenParamsLegacy;
 
   @override
   $Res call({
     Object? type = freezed,
+    Object? name = freezed,
     Object? address = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_CreateTokenParamsLegacy(
       type: type == freezed
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as TokenType,
+      name: name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       address: address == freezed
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -98,39 +188,636 @@ class _$CreateTokenParamsCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$CreateTokenParamsCopyWith<$Res>
-    implements $CreateTokenParamsCopyWith<$Res> {
-  factory _$CreateTokenParamsCopyWith(
-          _CreateTokenParams value, $Res Function(_CreateTokenParams) then) =
-      __$CreateTokenParamsCopyWithImpl<$Res>;
+
+@JsonSerializable(explicitToJson: true)
+@Deprecated('Use [CreateTokenParams.card] instead')
+class _$_CreateTokenParamsLegacy implements _CreateTokenParamsLegacy {
+  const _$_CreateTokenParamsLegacy(
+      {this.type = TokenType.Card, this.name, this.address, String? $type})
+      : $type = $type ?? 'default';
+
+  factory _$_CreateTokenParamsLegacy.fromJson(Map<String, dynamic> json) =>
+      _$$_CreateTokenParamsLegacyFromJson(json);
+
+  @JsonKey()
   @override
-  $Res call({TokenType type, Address? address});
+
+  /// Type of token.
+  final TokenType type;
+  @override
+
+  /// Name of the card holder
+  final String? name;
+  @override
+
+  /// Additional address details
+  final Address? address;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'CreateTokenParams(type: $type, name: $name, address: $address)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _CreateTokenParamsLegacy &&
+            const DeepCollectionEquality().equals(other.type, type) &&
+            const DeepCollectionEquality().equals(other.name, name) &&
+            const DeepCollectionEquality().equals(other.address, address));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(type),
+      const DeepCollectionEquality().hash(name),
+      const DeepCollectionEquality().hash(address));
+
+  @JsonKey(ignore: true)
+  @override
+  _$CreateTokenParamsLegacyCopyWith<_CreateTokenParamsLegacy> get copyWith =>
+      __$CreateTokenParamsLegacyCopyWithImpl<_CreateTokenParamsLegacy>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address) $default, {
+    required TResult Function(CardTokenParams params) card,
+    required TResult Function(BankAccountTokenParams params) bankAccount,
+  }) {
+    return $default(type, name, address);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+  }) {
+    return $default?.call(type, name, address);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+    required TResult orElse(),
+  }) {
+    if ($default != null) {
+      return $default(type, name, address);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value) $default, {
+    required TResult Function(_CreateTokenParamsCard value) card,
+    required TResult Function(_CreateTokenParamsBankAccount value) bankAccount,
+  }) {
+    return $default(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+  }) {
+    return $default?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+    required TResult orElse(),
+  }) {
+    if ($default != null) {
+      return $default(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_CreateTokenParamsLegacyToJson(this);
+  }
+}
+
+abstract class _CreateTokenParamsLegacy implements CreateTokenParams {
+  const factory _CreateTokenParamsLegacy(
+      {TokenType type,
+      String? name,
+      Address? address}) = _$_CreateTokenParamsLegacy;
+
+  factory _CreateTokenParamsLegacy.fromJson(Map<String, dynamic> json) =
+      _$_CreateTokenParamsLegacy.fromJson;
+
+  /// Type of token.
+  TokenType get type;
+
+  /// Name of the card holder
+  String? get name;
+
+  /// Additional address details
+  Address? get address;
+  @JsonKey(ignore: true)
+  _$CreateTokenParamsLegacyCopyWith<_CreateTokenParamsLegacy> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$CreateTokenParamsCardCopyWith<$Res> {
+  factory _$CreateTokenParamsCardCopyWith(_CreateTokenParamsCard value,
+          $Res Function(_CreateTokenParamsCard) then) =
+      __$CreateTokenParamsCardCopyWithImpl<$Res>;
+  $Res call({CardTokenParams params});
+
+  $CardTokenParamsCopyWith<$Res> get params;
+}
+
+/// @nodoc
+class __$CreateTokenParamsCardCopyWithImpl<$Res>
+    extends _$CreateTokenParamsCopyWithImpl<$Res>
+    implements _$CreateTokenParamsCardCopyWith<$Res> {
+  __$CreateTokenParamsCardCopyWithImpl(_CreateTokenParamsCard _value,
+      $Res Function(_CreateTokenParamsCard) _then)
+      : super(_value, (v) => _then(v as _CreateTokenParamsCard));
+
+  @override
+  _CreateTokenParamsCard get _value => super._value as _CreateTokenParamsCard;
+
+  @override
+  $Res call({
+    Object? params = freezed,
+  }) {
+    return _then(_CreateTokenParamsCard(
+      params: params == freezed
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as CardTokenParams,
+    ));
+  }
+
+  @override
+  $CardTokenParamsCopyWith<$Res> get params {
+    return $CardTokenParamsCopyWith<$Res>(_value.params, (value) {
+      return _then(_value.copyWith(params: value));
+    });
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true)
+class _$_CreateTokenParamsCard implements _CreateTokenParamsCard {
+  const _$_CreateTokenParamsCard({required this.params, String? $type})
+      : $type = $type ?? 'card';
+
+  factory _$_CreateTokenParamsCard.fromJson(Map<String, dynamic> json) =>
+      _$$_CreateTokenParamsCardFromJson(json);
+
+  @override
+  final CardTokenParams params;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'CreateTokenParams.card(params: $params)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _CreateTokenParamsCard &&
+            const DeepCollectionEquality().equals(other.params, params));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(params));
+
+  @JsonKey(ignore: true)
+  @override
+  _$CreateTokenParamsCardCopyWith<_CreateTokenParamsCard> get copyWith =>
+      __$CreateTokenParamsCardCopyWithImpl<_CreateTokenParamsCard>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address) $default, {
+    required TResult Function(CardTokenParams params) card,
+    required TResult Function(BankAccountTokenParams params) bankAccount,
+  }) {
+    return card(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+  }) {
+    return card?.call(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+    required TResult orElse(),
+  }) {
+    if (card != null) {
+      return card(params);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value) $default, {
+    required TResult Function(_CreateTokenParamsCard value) card,
+    required TResult Function(_CreateTokenParamsBankAccount value) bankAccount,
+  }) {
+    return card(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+  }) {
+    return card?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+    required TResult orElse(),
+  }) {
+    if (card != null) {
+      return card(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_CreateTokenParamsCardToJson(this);
+  }
+}
+
+abstract class _CreateTokenParamsCard implements CreateTokenParams {
+  const factory _CreateTokenParamsCard({required CardTokenParams params}) =
+      _$_CreateTokenParamsCard;
+
+  factory _CreateTokenParamsCard.fromJson(Map<String, dynamic> json) =
+      _$_CreateTokenParamsCard.fromJson;
+
+  CardTokenParams get params;
+  @JsonKey(ignore: true)
+  _$CreateTokenParamsCardCopyWith<_CreateTokenParamsCard> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$CreateTokenParamsBankAccountCopyWith<$Res> {
+  factory _$CreateTokenParamsBankAccountCopyWith(
+          _CreateTokenParamsBankAccount value,
+          $Res Function(_CreateTokenParamsBankAccount) then) =
+      __$CreateTokenParamsBankAccountCopyWithImpl<$Res>;
+  $Res call({BankAccountTokenParams params});
+
+  $BankAccountTokenParamsCopyWith<$Res> get params;
+}
+
+/// @nodoc
+class __$CreateTokenParamsBankAccountCopyWithImpl<$Res>
+    extends _$CreateTokenParamsCopyWithImpl<$Res>
+    implements _$CreateTokenParamsBankAccountCopyWith<$Res> {
+  __$CreateTokenParamsBankAccountCopyWithImpl(
+      _CreateTokenParamsBankAccount _value,
+      $Res Function(_CreateTokenParamsBankAccount) _then)
+      : super(_value, (v) => _then(v as _CreateTokenParamsBankAccount));
+
+  @override
+  _CreateTokenParamsBankAccount get _value =>
+      super._value as _CreateTokenParamsBankAccount;
+
+  @override
+  $Res call({
+    Object? params = freezed,
+  }) {
+    return _then(_CreateTokenParamsBankAccount(
+      params: params == freezed
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as BankAccountTokenParams,
+    ));
+  }
+
+  @override
+  $BankAccountTokenParamsCopyWith<$Res> get params {
+    return $BankAccountTokenParamsCopyWith<$Res>(_value.params, (value) {
+      return _then(_value.copyWith(params: value));
+    });
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true)
+class _$_CreateTokenParamsBankAccount implements _CreateTokenParamsBankAccount {
+  const _$_CreateTokenParamsBankAccount({required this.params, String? $type})
+      : $type = $type ?? 'bankAccount';
+
+  factory _$_CreateTokenParamsBankAccount.fromJson(Map<String, dynamic> json) =>
+      _$$_CreateTokenParamsBankAccountFromJson(json);
+
+  @override
+  final BankAccountTokenParams params;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'CreateTokenParams.bankAccount(params: $params)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _CreateTokenParamsBankAccount &&
+            const DeepCollectionEquality().equals(other.params, params));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(params));
+
+  @JsonKey(ignore: true)
+  @override
+  _$CreateTokenParamsBankAccountCopyWith<_CreateTokenParamsBankAccount>
+      get copyWith => __$CreateTokenParamsBankAccountCopyWithImpl<
+          _CreateTokenParamsBankAccount>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address) $default, {
+    required TResult Function(CardTokenParams params) card,
+    required TResult Function(BankAccountTokenParams params) bankAccount,
+  }) {
+    return bankAccount(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+  }) {
+    return bankAccount?.call(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(TokenType type, String? name, Address? address)?
+        $default, {
+    TResult Function(CardTokenParams params)? card,
+    TResult Function(BankAccountTokenParams params)? bankAccount,
+    required TResult orElse(),
+  }) {
+    if (bankAccount != null) {
+      return bankAccount(params);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value) $default, {
+    required TResult Function(_CreateTokenParamsCard value) card,
+    required TResult Function(_CreateTokenParamsBankAccount value) bankAccount,
+  }) {
+    return bankAccount(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+  }) {
+    return bankAccount?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_CreateTokenParamsLegacy value)? $default, {
+    TResult Function(_CreateTokenParamsCard value)? card,
+    TResult Function(_CreateTokenParamsBankAccount value)? bankAccount,
+    required TResult orElse(),
+  }) {
+    if (bankAccount != null) {
+      return bankAccount(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_CreateTokenParamsBankAccountToJson(this);
+  }
+}
+
+abstract class _CreateTokenParamsBankAccount implements CreateTokenParams {
+  const factory _CreateTokenParamsBankAccount(
+          {required BankAccountTokenParams params}) =
+      _$_CreateTokenParamsBankAccount;
+
+  factory _CreateTokenParamsBankAccount.fromJson(Map<String, dynamic> json) =
+      _$_CreateTokenParamsBankAccount.fromJson;
+
+  BankAccountTokenParams get params;
+  @JsonKey(ignore: true)
+  _$CreateTokenParamsBankAccountCopyWith<_CreateTokenParamsBankAccount>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+CardTokenParams _$CardTokenParamsFromJson(Map<String, dynamic> json) {
+  return _CardTokenParams.fromJson(json);
+}
+
+/// @nodoc
+class _$CardTokenParamsTearOff {
+  const _$CardTokenParamsTearOff();
+
+  _CardTokenParams call(
+      {TokenType type = TokenType.Card, String? name, Address? address}) {
+    return _CardTokenParams(
+      type: type,
+      name: name,
+      address: address,
+    );
+  }
+
+  CardTokenParams fromJson(Map<String, Object?> json) {
+    return CardTokenParams.fromJson(json);
+  }
+}
+
+/// @nodoc
+const $CardTokenParams = _$CardTokenParamsTearOff();
+
+/// @nodoc
+mixin _$CardTokenParams {
+  /// Type of token.
+  TokenType get type => throw _privateConstructorUsedError;
+
+  /// Name of the card holder
+  String? get name => throw _privateConstructorUsedError;
+
+  /// Additional address details
+  Address? get address => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $CardTokenParamsCopyWith<CardTokenParams> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CardTokenParamsCopyWith<$Res> {
+  factory $CardTokenParamsCopyWith(
+          CardTokenParams value, $Res Function(CardTokenParams) then) =
+      _$CardTokenParamsCopyWithImpl<$Res>;
+  $Res call({TokenType type, String? name, Address? address});
+
+  $AddressCopyWith<$Res>? get address;
+}
+
+/// @nodoc
+class _$CardTokenParamsCopyWithImpl<$Res>
+    implements $CardTokenParamsCopyWith<$Res> {
+  _$CardTokenParamsCopyWithImpl(this._value, this._then);
+
+  final CardTokenParams _value;
+  // ignore: unused_field
+  final $Res Function(CardTokenParams) _then;
+
+  @override
+  $Res call({
+    Object? type = freezed,
+    Object? name = freezed,
+    Object? address = freezed,
+  }) {
+    return _then(_value.copyWith(
+      type: type == freezed
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TokenType,
+      name: name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      address: address == freezed
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as Address?,
+    ));
+  }
+
+  @override
+  $AddressCopyWith<$Res>? get address {
+    if (_value.address == null) {
+      return null;
+    }
+
+    return $AddressCopyWith<$Res>(_value.address!, (value) {
+      return _then(_value.copyWith(address: value));
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$CardTokenParamsCopyWith<$Res>
+    implements $CardTokenParamsCopyWith<$Res> {
+  factory _$CardTokenParamsCopyWith(
+          _CardTokenParams value, $Res Function(_CardTokenParams) then) =
+      __$CardTokenParamsCopyWithImpl<$Res>;
+  @override
+  $Res call({TokenType type, String? name, Address? address});
 
   @override
   $AddressCopyWith<$Res>? get address;
 }
 
 /// @nodoc
-class __$CreateTokenParamsCopyWithImpl<$Res>
-    extends _$CreateTokenParamsCopyWithImpl<$Res>
-    implements _$CreateTokenParamsCopyWith<$Res> {
-  __$CreateTokenParamsCopyWithImpl(
-      _CreateTokenParams _value, $Res Function(_CreateTokenParams) _then)
-      : super(_value, (v) => _then(v as _CreateTokenParams));
+class __$CardTokenParamsCopyWithImpl<$Res>
+    extends _$CardTokenParamsCopyWithImpl<$Res>
+    implements _$CardTokenParamsCopyWith<$Res> {
+  __$CardTokenParamsCopyWithImpl(
+      _CardTokenParams _value, $Res Function(_CardTokenParams) _then)
+      : super(_value, (v) => _then(v as _CardTokenParams));
 
   @override
-  _CreateTokenParams get _value => super._value as _CreateTokenParams;
+  _CardTokenParams get _value => super._value as _CardTokenParams;
 
   @override
   $Res call({
     Object? type = freezed,
+    Object? name = freezed,
     Object? address = freezed,
   }) {
-    return _then(_CreateTokenParams(
+    return _then(_CardTokenParams(
       type: type == freezed
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as TokenType,
+      name: name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
       address: address == freezed
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -141,17 +828,22 @@ class __$CreateTokenParamsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_CreateTokenParams implements _CreateTokenParams {
-  const _$_CreateTokenParams({this.type = TokenType.Card, this.address});
+class _$_CardTokenParams implements _CardTokenParams {
+  const _$_CardTokenParams(
+      {this.type = TokenType.Card, this.name, this.address});
 
-  factory _$_CreateTokenParams.fromJson(Map<String, dynamic> json) =>
-      _$_$_CreateTokenParamsFromJson(json);
+  factory _$_CardTokenParams.fromJson(Map<String, dynamic> json) =>
+      _$$_CardTokenParamsFromJson(json);
 
-  @JsonKey(defaultValue: TokenType.Card)
+  @JsonKey()
   @override
 
   /// Type of token.
   final TokenType type;
+  @override
+
+  /// Name of the card holder
+  final String? name;
   @override
 
   /// Additional address details
@@ -159,54 +851,401 @@ class _$_CreateTokenParams implements _CreateTokenParams {
 
   @override
   String toString() {
-    return 'CreateTokenParams(type: $type, address: $address)';
+    return 'CardTokenParams(type: $type, name: $name, address: $address)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _CreateTokenParams &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality().equals(other.address, address)));
+        (other.runtimeType == runtimeType &&
+            other is _CardTokenParams &&
+            const DeepCollectionEquality().equals(other.type, type) &&
+            const DeepCollectionEquality().equals(other.name, name) &&
+            const DeepCollectionEquality().equals(other.address, address));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(address);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(type),
+      const DeepCollectionEquality().hash(name),
+      const DeepCollectionEquality().hash(address));
 
   @JsonKey(ignore: true)
   @override
-  _$CreateTokenParamsCopyWith<_CreateTokenParams> get copyWith =>
-      __$CreateTokenParamsCopyWithImpl<_CreateTokenParams>(this, _$identity);
+  _$CardTokenParamsCopyWith<_CardTokenParams> get copyWith =>
+      __$CardTokenParamsCopyWithImpl<_CardTokenParams>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_CreateTokenParamsToJson(this);
+    return _$$_CardTokenParamsToJson(this);
   }
 }
 
-abstract class _CreateTokenParams implements CreateTokenParams {
-  const factory _CreateTokenParams({TokenType type, Address? address}) =
-      _$_CreateTokenParams;
+abstract class _CardTokenParams implements CardTokenParams {
+  const factory _CardTokenParams(
+      {TokenType type, String? name, Address? address}) = _$_CardTokenParams;
 
-  factory _CreateTokenParams.fromJson(Map<String, dynamic> json) =
-      _$_CreateTokenParams.fromJson;
+  factory _CardTokenParams.fromJson(Map<String, dynamic> json) =
+      _$_CardTokenParams.fromJson;
 
   @override
 
   /// Type of token.
-  TokenType get type => throw _privateConstructorUsedError;
+  TokenType get type;
+  @override
+
+  /// Name of the card holder
+  String? get name;
   @override
 
   /// Additional address details
-  Address? get address => throw _privateConstructorUsedError;
+  Address? get address;
   @override
   @JsonKey(ignore: true)
-  _$CreateTokenParamsCopyWith<_CreateTokenParams> get copyWith =>
+  _$CardTokenParamsCopyWith<_CardTokenParams> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BankAccountTokenParams _$BankAccountTokenParamsFromJson(
+    Map<String, dynamic> json) {
+  return _BankAccountTokenParams.fromJson(json);
+}
+
+/// @nodoc
+class _$BankAccountTokenParamsTearOff {
+  const _$BankAccountTokenParamsTearOff();
+
+  _BankAccountTokenParams call(
+      {TokenType type = TokenType.BankAccount,
+      required String accountNumber,
+      required String country,
+      required String currency,
+      String? accountHolderName,
+      BankAccountHolderType? accountHolderType,
+      String? routingNumber}) {
+    return _BankAccountTokenParams(
+      type: type,
+      accountNumber: accountNumber,
+      country: country,
+      currency: currency,
+      accountHolderName: accountHolderName,
+      accountHolderType: accountHolderType,
+      routingNumber: routingNumber,
+    );
+  }
+
+  BankAccountTokenParams fromJson(Map<String, Object?> json) {
+    return BankAccountTokenParams.fromJson(json);
+  }
+}
+
+/// @nodoc
+const $BankAccountTokenParams = _$BankAccountTokenParamsTearOff();
+
+/// @nodoc
+mixin _$BankAccountTokenParams {
+  /// Type of token.
+  TokenType get type => throw _privateConstructorUsedError;
+
+  /// unique number of the account.
+  String get accountNumber => throw _privateConstructorUsedError;
+
+  /// 2 letter code of the country where the account is located
+  String get country => throw _privateConstructorUsedError;
+
+  /// The three letter ISO 4217 code for the currency.
+  String get currency => throw _privateConstructorUsedError;
+
+  /// Full name of the account holder
+  String? get accountHolderName => throw _privateConstructorUsedError;
+
+  /// Entity that is holder of the account.
+  BankAccountHolderType? get accountHolderType =>
+      throw _privateConstructorUsedError;
+
+  /// The routing number of the bank account (e.g. needer for US accounts).
+  String? get routingNumber => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $BankAccountTokenParamsCopyWith<BankAccountTokenParams> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BankAccountTokenParamsCopyWith<$Res> {
+  factory $BankAccountTokenParamsCopyWith(BankAccountTokenParams value,
+          $Res Function(BankAccountTokenParams) then) =
+      _$BankAccountTokenParamsCopyWithImpl<$Res>;
+  $Res call(
+      {TokenType type,
+      String accountNumber,
+      String country,
+      String currency,
+      String? accountHolderName,
+      BankAccountHolderType? accountHolderType,
+      String? routingNumber});
+}
+
+/// @nodoc
+class _$BankAccountTokenParamsCopyWithImpl<$Res>
+    implements $BankAccountTokenParamsCopyWith<$Res> {
+  _$BankAccountTokenParamsCopyWithImpl(this._value, this._then);
+
+  final BankAccountTokenParams _value;
+  // ignore: unused_field
+  final $Res Function(BankAccountTokenParams) _then;
+
+  @override
+  $Res call({
+    Object? type = freezed,
+    Object? accountNumber = freezed,
+    Object? country = freezed,
+    Object? currency = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountHolderType = freezed,
+    Object? routingNumber = freezed,
+  }) {
+    return _then(_value.copyWith(
+      type: type == freezed
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TokenType,
+      accountNumber: accountNumber == freezed
+          ? _value.accountNumber
+          : accountNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      country: country == freezed
+          ? _value.country
+          : country // ignore: cast_nullable_to_non_nullable
+              as String,
+      currency: currency == freezed
+          ? _value.currency
+          : currency // ignore: cast_nullable_to_non_nullable
+              as String,
+      accountHolderName: accountHolderName == freezed
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountHolderType: accountHolderType == freezed
+          ? _value.accountHolderType
+          : accountHolderType // ignore: cast_nullable_to_non_nullable
+              as BankAccountHolderType?,
+      routingNumber: routingNumber == freezed
+          ? _value.routingNumber
+          : routingNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+abstract class _$BankAccountTokenParamsCopyWith<$Res>
+    implements $BankAccountTokenParamsCopyWith<$Res> {
+  factory _$BankAccountTokenParamsCopyWith(_BankAccountTokenParams value,
+          $Res Function(_BankAccountTokenParams) then) =
+      __$BankAccountTokenParamsCopyWithImpl<$Res>;
+  @override
+  $Res call(
+      {TokenType type,
+      String accountNumber,
+      String country,
+      String currency,
+      String? accountHolderName,
+      BankAccountHolderType? accountHolderType,
+      String? routingNumber});
+}
+
+/// @nodoc
+class __$BankAccountTokenParamsCopyWithImpl<$Res>
+    extends _$BankAccountTokenParamsCopyWithImpl<$Res>
+    implements _$BankAccountTokenParamsCopyWith<$Res> {
+  __$BankAccountTokenParamsCopyWithImpl(_BankAccountTokenParams _value,
+      $Res Function(_BankAccountTokenParams) _then)
+      : super(_value, (v) => _then(v as _BankAccountTokenParams));
+
+  @override
+  _BankAccountTokenParams get _value => super._value as _BankAccountTokenParams;
+
+  @override
+  $Res call({
+    Object? type = freezed,
+    Object? accountNumber = freezed,
+    Object? country = freezed,
+    Object? currency = freezed,
+    Object? accountHolderName = freezed,
+    Object? accountHolderType = freezed,
+    Object? routingNumber = freezed,
+  }) {
+    return _then(_BankAccountTokenParams(
+      type: type == freezed
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TokenType,
+      accountNumber: accountNumber == freezed
+          ? _value.accountNumber
+          : accountNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+      country: country == freezed
+          ? _value.country
+          : country // ignore: cast_nullable_to_non_nullable
+              as String,
+      currency: currency == freezed
+          ? _value.currency
+          : currency // ignore: cast_nullable_to_non_nullable
+              as String,
+      accountHolderName: accountHolderName == freezed
+          ? _value.accountHolderName
+          : accountHolderName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      accountHolderType: accountHolderType == freezed
+          ? _value.accountHolderType
+          : accountHolderType // ignore: cast_nullable_to_non_nullable
+              as BankAccountHolderType?,
+      routingNumber: routingNumber == freezed
+          ? _value.routingNumber
+          : routingNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_BankAccountTokenParams implements _BankAccountTokenParams {
+  const _$_BankAccountTokenParams(
+      {this.type = TokenType.BankAccount,
+      required this.accountNumber,
+      required this.country,
+      required this.currency,
+      this.accountHolderName,
+      this.accountHolderType,
+      this.routingNumber});
+
+  factory _$_BankAccountTokenParams.fromJson(Map<String, dynamic> json) =>
+      _$$_BankAccountTokenParamsFromJson(json);
+
+  @JsonKey()
+  @override
+
+  /// Type of token.
+  final TokenType type;
+  @override
+
+  /// unique number of the account.
+  final String accountNumber;
+  @override
+
+  /// 2 letter code of the country where the account is located
+  final String country;
+  @override
+
+  /// The three letter ISO 4217 code for the currency.
+  final String currency;
+  @override
+
+  /// Full name of the account holder
+  final String? accountHolderName;
+  @override
+
+  /// Entity that is holder of the account.
+  final BankAccountHolderType? accountHolderType;
+  @override
+
+  /// The routing number of the bank account (e.g. needer for US accounts).
+  final String? routingNumber;
+
+  @override
+  String toString() {
+    return 'BankAccountTokenParams(type: $type, accountNumber: $accountNumber, country: $country, currency: $currency, accountHolderName: $accountHolderName, accountHolderType: $accountHolderType, routingNumber: $routingNumber)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _BankAccountTokenParams &&
+            const DeepCollectionEquality().equals(other.type, type) &&
+            const DeepCollectionEquality()
+                .equals(other.accountNumber, accountNumber) &&
+            const DeepCollectionEquality().equals(other.country, country) &&
+            const DeepCollectionEquality().equals(other.currency, currency) &&
+            const DeepCollectionEquality()
+                .equals(other.accountHolderName, accountHolderName) &&
+            const DeepCollectionEquality()
+                .equals(other.accountHolderType, accountHolderType) &&
+            const DeepCollectionEquality()
+                .equals(other.routingNumber, routingNumber));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(type),
+      const DeepCollectionEquality().hash(accountNumber),
+      const DeepCollectionEquality().hash(country),
+      const DeepCollectionEquality().hash(currency),
+      const DeepCollectionEquality().hash(accountHolderName),
+      const DeepCollectionEquality().hash(accountHolderType),
+      const DeepCollectionEquality().hash(routingNumber));
+
+  @JsonKey(ignore: true)
+  @override
+  _$BankAccountTokenParamsCopyWith<_BankAccountTokenParams> get copyWith =>
+      __$BankAccountTokenParamsCopyWithImpl<_BankAccountTokenParams>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_BankAccountTokenParamsToJson(this);
+  }
+}
+
+abstract class _BankAccountTokenParams implements BankAccountTokenParams {
+  const factory _BankAccountTokenParams(
+      {TokenType type,
+      required String accountNumber,
+      required String country,
+      required String currency,
+      String? accountHolderName,
+      BankAccountHolderType? accountHolderType,
+      String? routingNumber}) = _$_BankAccountTokenParams;
+
+  factory _BankAccountTokenParams.fromJson(Map<String, dynamic> json) =
+      _$_BankAccountTokenParams.fromJson;
+
+  @override
+
+  /// Type of token.
+  TokenType get type;
+  @override
+
+  /// unique number of the account.
+  String get accountNumber;
+  @override
+
+  /// 2 letter code of the country where the account is located
+  String get country;
+  @override
+
+  /// The three letter ISO 4217 code for the currency.
+  String get currency;
+  @override
+
+  /// Full name of the account holder
+  String? get accountHolderName;
+  @override
+
+  /// Entity that is holder of the account.
+  BankAccountHolderType? get accountHolderType;
+  @override
+
+  /// The routing number of the bank account (e.g. needer for US accounts).
+  String? get routingNumber;
+  @override
+  @JsonKey(ignore: true)
+  _$BankAccountTokenParamsCopyWith<_BankAccountTokenParams> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -235,7 +1274,7 @@ class _$TokenDataTearOff {
     );
   }
 
-  TokenData fromJson(Map<String, Object> json) {
+  TokenData fromJson(Map<String, Object?> json) {
     return TokenData.fromJson(json);
   }
 }
@@ -433,7 +1472,7 @@ class _$_TokenData implements _TokenData {
       this.card});
 
   factory _$_TokenData.fromJson(Map<String, dynamic> json) =>
-      _$_$_TokenDataFromJson(json);
+      _$$_TokenDataFromJson(json);
 
   @override
 
@@ -469,33 +1508,27 @@ class _$_TokenData implements _TokenData {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _TokenData &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.createdDateTime, createdDateTime) ||
-                const DeepCollectionEquality()
-                    .equals(other.createdDateTime, createdDateTime)) &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.livemode, livemode) ||
-                const DeepCollectionEquality()
-                    .equals(other.livemode, livemode)) &&
-            (identical(other.bankAccount, bankAccount) ||
-                const DeepCollectionEquality()
-                    .equals(other.bankAccount, bankAccount)) &&
-            (identical(other.card, card) ||
-                const DeepCollectionEquality().equals(other.card, card)));
+        (other.runtimeType == runtimeType &&
+            other is _TokenData &&
+            const DeepCollectionEquality().equals(other.id, id) &&
+            const DeepCollectionEquality()
+                .equals(other.createdDateTime, createdDateTime) &&
+            const DeepCollectionEquality().equals(other.type, type) &&
+            const DeepCollectionEquality().equals(other.livemode, livemode) &&
+            const DeepCollectionEquality()
+                .equals(other.bankAccount, bankAccount) &&
+            const DeepCollectionEquality().equals(other.card, card));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(createdDateTime) ^
-      const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(livemode) ^
-      const DeepCollectionEquality().hash(bankAccount) ^
-      const DeepCollectionEquality().hash(card);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(id),
+      const DeepCollectionEquality().hash(createdDateTime),
+      const DeepCollectionEquality().hash(type),
+      const DeepCollectionEquality().hash(livemode),
+      const DeepCollectionEquality().hash(bankAccount),
+      const DeepCollectionEquality().hash(card));
 
   @JsonKey(ignore: true)
   @override
@@ -504,7 +1537,7 @@ class _$_TokenData implements _TokenData {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_TokenDataToJson(this);
+    return _$$_TokenDataToJson(this);
   }
 }
 
@@ -523,28 +1556,28 @@ abstract class _TokenData implements TokenData {
   @override
 
   /// Unique identifier of the token
-  String get id => throw _privateConstructorUsedError;
+  String get id;
   @override
 
   /// Timestamp when token was created
   @JsonKey(name: 'created')
-  String get createdDateTime => throw _privateConstructorUsedError;
+  String get createdDateTime;
   @override
 
   /// Type of the token
-  TokenType get type => throw _privateConstructorUsedError;
+  TokenType get type;
   @override
 
   /// Whether or not the object exists in livemode
-  bool get livemode => throw _privateConstructorUsedError;
+  bool get livemode;
   @override
 
   /// Bank account data
-  BankAccount? get bankAccount => throw _privateConstructorUsedError;
+  BankAccount? get bankAccount;
   @override
 
   /// Card data
-  CardData? get card => throw _privateConstructorUsedError;
+  CardData? get card;
   @override
   @JsonKey(ignore: true)
   _$TokenDataCopyWith<_TokenData> get copyWith =>
@@ -582,7 +1615,7 @@ class _$CardDataTearOff {
     );
   }
 
-  CardData fromJson(Map<String, Object> json) {
+  CardData fromJson(Map<String, Object?> json) {
     return CardData.fromJson(json);
   }
 }
@@ -813,7 +1846,7 @@ class _$_CardData implements _CardData {
       this.address});
 
   factory _$_CardData.fromJson(Map<String, dynamic> json) =>
-      _$_$_CardDataFromJson(json);
+      _$$_CardDataFromJson(json);
 
   @override
 
@@ -860,44 +1893,31 @@ class _$_CardData implements _CardData {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _CardData &&
-            (identical(other.brand, brand) ||
-                const DeepCollectionEquality().equals(other.brand, brand)) &&
-            (identical(other.country, country) ||
-                const DeepCollectionEquality()
-                    .equals(other.country, country)) &&
-            (identical(other.currency, currency) ||
-                const DeepCollectionEquality()
-                    .equals(other.currency, currency)) &&
-            (identical(other.expYear, expYear) ||
-                const DeepCollectionEquality()
-                    .equals(other.expYear, expYear)) &&
-            (identical(other.expMonth, expMonth) ||
-                const DeepCollectionEquality()
-                    .equals(other.expMonth, expMonth)) &&
-            (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)) &&
-            (identical(other.funding, funding) ||
-                const DeepCollectionEquality()
-                    .equals(other.funding, funding)) &&
-            (identical(other.last4, last4) ||
-                const DeepCollectionEquality().equals(other.last4, last4)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality().equals(other.address, address)));
+        (other.runtimeType == runtimeType &&
+            other is _CardData &&
+            const DeepCollectionEquality().equals(other.brand, brand) &&
+            const DeepCollectionEquality().equals(other.country, country) &&
+            const DeepCollectionEquality().equals(other.currency, currency) &&
+            const DeepCollectionEquality().equals(other.expYear, expYear) &&
+            const DeepCollectionEquality().equals(other.expMonth, expMonth) &&
+            const DeepCollectionEquality().equals(other.name, name) &&
+            const DeepCollectionEquality().equals(other.funding, funding) &&
+            const DeepCollectionEquality().equals(other.last4, last4) &&
+            const DeepCollectionEquality().equals(other.address, address));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(brand) ^
-      const DeepCollectionEquality().hash(country) ^
-      const DeepCollectionEquality().hash(currency) ^
-      const DeepCollectionEquality().hash(expYear) ^
-      const DeepCollectionEquality().hash(expMonth) ^
-      const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(funding) ^
-      const DeepCollectionEquality().hash(last4) ^
-      const DeepCollectionEquality().hash(address);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(brand),
+      const DeepCollectionEquality().hash(country),
+      const DeepCollectionEquality().hash(currency),
+      const DeepCollectionEquality().hash(expYear),
+      const DeepCollectionEquality().hash(expMonth),
+      const DeepCollectionEquality().hash(name),
+      const DeepCollectionEquality().hash(funding),
+      const DeepCollectionEquality().hash(last4),
+      const DeepCollectionEquality().hash(address));
 
   @JsonKey(ignore: true)
   @override
@@ -906,7 +1926,7 @@ class _$_CardData implements _CardData {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_CardDataToJson(this);
+    return _$$_CardDataToJson(this);
   }
 }
 
@@ -927,39 +1947,39 @@ abstract class _CardData implements CardData {
   @override
 
   /// The brand associated to the card e.g. (visa, amex).
-  String get brand => throw _privateConstructorUsedError;
+  String get brand;
   @override
 
   /// Two letter iso code.
-  String? get country => throw _privateConstructorUsedError;
+  String? get country;
   @override
 
   /// The three letter ISO 4217 code for the currency.
-  String? get currency => throw _privateConstructorUsedError;
+  String? get currency;
   @override
 
   /// four digit number representing the year of expiry of the card.
-  int? get expYear => throw _privateConstructorUsedError;
+  int? get expYear;
   @override
 
   /// two digit number representing the month of expire of the card.
-  int? get expMonth => throw _privateConstructorUsedError;
+  int? get expMonth;
   @override
 
   /// Fullname of the cardholder
-  String? get name => throw _privateConstructorUsedError;
+  String? get name;
   @override
 
   /// card funding type e.g. (credit, debit).
-  String? get funding => throw _privateConstructorUsedError;
+  String? get funding;
   @override
 
   /// last four digits of the card.
-  String? get last4 => throw _privateConstructorUsedError;
+  String? get last4;
   @override
 
   /// Address of the cardholder
-  Address? get address => throw _privateConstructorUsedError;
+  Address? get address;
   @override
   @JsonKey(ignore: true)
   _$CardDataCopyWith<_CardData> get copyWith =>
@@ -993,7 +2013,7 @@ class _$BankAccountTearOff {
     );
   }
 
-  BankAccount fromJson(Map<String, Object> json) {
+  BankAccount fromJson(Map<String, Object?> json) {
     return BankAccount.fromJson(json);
   }
 }
@@ -1180,7 +2200,7 @@ class _$_BankAccount implements _BankAccount {
       this.routingNumber});
 
   factory _$_BankAccount.fromJson(Map<String, dynamic> json) =>
-      _$_$_BankAccountFromJson(json);
+      _$$_BankAccountFromJson(json);
 
   @override
 
@@ -1219,39 +2239,30 @@ class _$_BankAccount implements _BankAccount {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _BankAccount &&
-            (identical(other.accountHolderType, accountHolderType) ||
-                const DeepCollectionEquality()
-                    .equals(other.accountHolderType, accountHolderType)) &&
-            (identical(other.status, status) ||
-                const DeepCollectionEquality().equals(other.status, status)) &&
-            (identical(other.bankName, bankName) ||
-                const DeepCollectionEquality()
-                    .equals(other.bankName, bankName)) &&
-            (identical(other.accountHolderName, accountHolderName) ||
-                const DeepCollectionEquality()
-                    .equals(other.accountHolderName, accountHolderName)) &&
-            (identical(other.country, country) ||
-                const DeepCollectionEquality()
-                    .equals(other.country, country)) &&
-            (identical(other.currency, currency) ||
-                const DeepCollectionEquality()
-                    .equals(other.currency, currency)) &&
-            (identical(other.routingNumber, routingNumber) ||
-                const DeepCollectionEquality()
-                    .equals(other.routingNumber, routingNumber)));
+        (other.runtimeType == runtimeType &&
+            other is _BankAccount &&
+            const DeepCollectionEquality()
+                .equals(other.accountHolderType, accountHolderType) &&
+            const DeepCollectionEquality().equals(other.status, status) &&
+            const DeepCollectionEquality().equals(other.bankName, bankName) &&
+            const DeepCollectionEquality()
+                .equals(other.accountHolderName, accountHolderName) &&
+            const DeepCollectionEquality().equals(other.country, country) &&
+            const DeepCollectionEquality().equals(other.currency, currency) &&
+            const DeepCollectionEquality()
+                .equals(other.routingNumber, routingNumber));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(accountHolderType) ^
-      const DeepCollectionEquality().hash(status) ^
-      const DeepCollectionEquality().hash(bankName) ^
-      const DeepCollectionEquality().hash(accountHolderName) ^
-      const DeepCollectionEquality().hash(country) ^
-      const DeepCollectionEquality().hash(currency) ^
-      const DeepCollectionEquality().hash(routingNumber);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(accountHolderType),
+      const DeepCollectionEquality().hash(status),
+      const DeepCollectionEquality().hash(bankName),
+      const DeepCollectionEquality().hash(accountHolderName),
+      const DeepCollectionEquality().hash(country),
+      const DeepCollectionEquality().hash(currency),
+      const DeepCollectionEquality().hash(routingNumber));
 
   @JsonKey(ignore: true)
   @override
@@ -1260,7 +2271,7 @@ class _$_BankAccount implements _BankAccount {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_BankAccountToJson(this);
+    return _$$_BankAccountToJson(this);
   }
 }
 
@@ -1280,32 +2291,31 @@ abstract class _BankAccount implements BankAccount {
   @override
 
   /// Entity that is holder of the account.
-  BankAccountHolderType get accountHolderType =>
-      throw _privateConstructorUsedError;
+  BankAccountHolderType get accountHolderType;
   @override
 
   /// Status of the bank account.
-  BankAccountStatus get status => throw _privateConstructorUsedError;
+  BankAccountStatus get status;
   @override
 
   /// Name of the bank where the account is registered.
-  String? get bankName => throw _privateConstructorUsedError;
+  String? get bankName;
   @override
 
   /// Full name of the account holder
-  String? get accountHolderName => throw _privateConstructorUsedError;
+  String? get accountHolderName;
   @override
 
   /// 2 letter code of the country where the account is located
-  String? get country => throw _privateConstructorUsedError;
+  String? get country;
   @override
 
   /// The three letter ISO 4217 code for the currency.
-  String? get currency => throw _privateConstructorUsedError;
+  String? get currency;
   @override
 
   /// The routing number of the bank account (e.g. needer for US accounts).
-  String? get routingNumber => throw _privateConstructorUsedError;
+  String? get routingNumber;
   @override
   @JsonKey(ignore: true)
   _$BankAccountCopyWith<_BankAccount> get copyWith =>

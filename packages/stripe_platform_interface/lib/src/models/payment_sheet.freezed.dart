@@ -1,5 +1,7 @@
+// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
 part of 'payment_sheet.dart';
 
@@ -29,10 +31,18 @@ class _$SetupPaymentSheetParametersTearOff {
       String? setupIntentClientSecret,
       String? merchantDisplayName,
       String? merchantCountryCode,
+      String? currencyCode,
       bool? applePay,
-      @JsonKey(toJson: UserInterfaceStyleKey.toJson) ThemeMode? style,
+      @JsonKey(toJson: UserInterfaceStyleKey.toJson)
+          ThemeMode? style,
       bool? googlePay,
-      bool testEnv = false}) {
+      bool allowsDelayedPaymentMethods = false,
+      @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+          Color? primaryButtonColor,
+      bool testEnv = false,
+      @BillingDetailsConverter()
+          BillingDetails? billingDetails,
+      String? returnURL}) {
     return _SetupParameters(
       customFlow: customFlow,
       customerId: customerId,
@@ -41,14 +51,19 @@ class _$SetupPaymentSheetParametersTearOff {
       setupIntentClientSecret: setupIntentClientSecret,
       merchantDisplayName: merchantDisplayName,
       merchantCountryCode: merchantCountryCode,
+      currencyCode: currencyCode,
       applePay: applePay,
       style: style,
       googlePay: googlePay,
+      allowsDelayedPaymentMethods: allowsDelayedPaymentMethods,
+      primaryButtonColor: primaryButtonColor,
       testEnv: testEnv,
+      billingDetails: billingDetails,
+      returnURL: returnURL,
     );
   }
 
-  SetupPaymentSheetParameters fromJson(Map<String, Object> json) {
+  SetupPaymentSheetParameters fromJson(Map<String, Object?> json) {
     return SetupPaymentSheetParameters.fromJson(json);
   }
 }
@@ -58,11 +73,11 @@ const $SetupPaymentSheetParameters = _$SetupPaymentSheetParametersTearOff();
 
 /// @nodoc
 mixin _$SetupPaymentSheetParameters {
-  ///Whether or not to display a custom flow
+  /// Whether or not to use a custom flow.
   ///
-  /// When value is `false` make sure [PresentPaymentSheetParameters.confirmPayment]
-  /// is set to `true`. If value is set to `true` [PresentPaymentSheetParameters.confirmPayment]
-  /// has to be set to `false`.
+  /// If this value is true, the payment sheet will allow to select a payment method
+  /// and a later confirmation will be needed by calling [confirmPaymentSheetPayment]
+  /// By default, false.
   bool get customFlow => throw _privateConstructorUsedError;
 
   /// The identifier of the Stripe Customer object.
@@ -88,6 +103,13 @@ mixin _$SetupPaymentSheetParameters {
   /// ISO country code of the country where the merchant is located
   String? get merchantCountryCode => throw _privateConstructorUsedError;
 
+  /// Three letter ISO currency code
+  ///
+  /// Must be a supported currency code. See https://stripe.com/docs/currencies for supported currencies.
+  ///
+  /// When [setupIntentClientSecret] is not empty it is required to provide a currencyCode.
+  String? get currencyCode => throw _privateConstructorUsedError;
+
   /// Configuration related to Apple Pay
   /// If set, PaymentSheet displays Apple Pay as a payment option
   /// A merchantCountryCode would then be required
@@ -102,8 +124,26 @@ mixin _$SetupPaymentSheetParameters {
   /// A merchantCountryCode would then be required
   bool? get googlePay => throw _privateConstructorUsedError;
 
+  /// Flag that allows payment methods that do not move money at the send of the checkout.
+  ///
+  /// Defaul value is false.
+  bool get allowsDelayedPaymentMethods => throw _privateConstructorUsedError;
+
+  /// Button color of the checkoutButton
+  ///
+  /// Make sure that there is enough contrast with the rest of the paymentsheet.
+  @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+  Color? get primaryButtonColor => throw _privateConstructorUsedError;
+
   /// Flag for using the test environment
   bool get testEnv => throw _privateConstructorUsedError;
+
+  /// Billing information of the customer.
+  @BillingDetailsConverter()
+  BillingDetails? get billingDetails => throw _privateConstructorUsedError;
+
+  /// Return URL is required for IDEAL and few other payment methods
+  String? get returnURL => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -125,10 +165,20 @@ abstract class $SetupPaymentSheetParametersCopyWith<$Res> {
       String? setupIntentClientSecret,
       String? merchantDisplayName,
       String? merchantCountryCode,
+      String? currencyCode,
       bool? applePay,
-      @JsonKey(toJson: UserInterfaceStyleKey.toJson) ThemeMode? style,
+      @JsonKey(toJson: UserInterfaceStyleKey.toJson)
+          ThemeMode? style,
       bool? googlePay,
-      bool testEnv});
+      bool allowsDelayedPaymentMethods,
+      @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+          Color? primaryButtonColor,
+      bool testEnv,
+      @BillingDetailsConverter()
+          BillingDetails? billingDetails,
+      String? returnURL});
+
+  $BillingDetailsCopyWith<$Res>? get billingDetails;
 }
 
 /// @nodoc
@@ -149,10 +199,15 @@ class _$SetupPaymentSheetParametersCopyWithImpl<$Res>
     Object? setupIntentClientSecret = freezed,
     Object? merchantDisplayName = freezed,
     Object? merchantCountryCode = freezed,
+    Object? currencyCode = freezed,
     Object? applePay = freezed,
     Object? style = freezed,
     Object? googlePay = freezed,
+    Object? allowsDelayedPaymentMethods = freezed,
+    Object? primaryButtonColor = freezed,
     Object? testEnv = freezed,
+    Object? billingDetails = freezed,
+    Object? returnURL = freezed,
   }) {
     return _then(_value.copyWith(
       customFlow: customFlow == freezed
@@ -183,6 +238,10 @@ class _$SetupPaymentSheetParametersCopyWithImpl<$Res>
           ? _value.merchantCountryCode
           : merchantCountryCode // ignore: cast_nullable_to_non_nullable
               as String?,
+      currencyCode: currencyCode == freezed
+          ? _value.currencyCode
+          : currencyCode // ignore: cast_nullable_to_non_nullable
+              as String?,
       applePay: applePay == freezed
           ? _value.applePay
           : applePay // ignore: cast_nullable_to_non_nullable
@@ -195,11 +254,38 @@ class _$SetupPaymentSheetParametersCopyWithImpl<$Res>
           ? _value.googlePay
           : googlePay // ignore: cast_nullable_to_non_nullable
               as bool?,
+      allowsDelayedPaymentMethods: allowsDelayedPaymentMethods == freezed
+          ? _value.allowsDelayedPaymentMethods
+          : allowsDelayedPaymentMethods // ignore: cast_nullable_to_non_nullable
+              as bool,
+      primaryButtonColor: primaryButtonColor == freezed
+          ? _value.primaryButtonColor
+          : primaryButtonColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       testEnv: testEnv == freezed
           ? _value.testEnv
           : testEnv // ignore: cast_nullable_to_non_nullable
               as bool,
+      billingDetails: billingDetails == freezed
+          ? _value.billingDetails
+          : billingDetails // ignore: cast_nullable_to_non_nullable
+              as BillingDetails?,
+      returnURL: returnURL == freezed
+          ? _value.returnURL
+          : returnURL // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
+  }
+
+  @override
+  $BillingDetailsCopyWith<$Res>? get billingDetails {
+    if (_value.billingDetails == null) {
+      return null;
+    }
+
+    return $BillingDetailsCopyWith<$Res>(_value.billingDetails!, (value) {
+      return _then(_value.copyWith(billingDetails: value));
+    });
   }
 }
 
@@ -218,10 +304,21 @@ abstract class _$SetupParametersCopyWith<$Res>
       String? setupIntentClientSecret,
       String? merchantDisplayName,
       String? merchantCountryCode,
+      String? currencyCode,
       bool? applePay,
-      @JsonKey(toJson: UserInterfaceStyleKey.toJson) ThemeMode? style,
+      @JsonKey(toJson: UserInterfaceStyleKey.toJson)
+          ThemeMode? style,
       bool? googlePay,
-      bool testEnv});
+      bool allowsDelayedPaymentMethods,
+      @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+          Color? primaryButtonColor,
+      bool testEnv,
+      @BillingDetailsConverter()
+          BillingDetails? billingDetails,
+      String? returnURL});
+
+  @override
+  $BillingDetailsCopyWith<$Res>? get billingDetails;
 }
 
 /// @nodoc
@@ -244,10 +341,15 @@ class __$SetupParametersCopyWithImpl<$Res>
     Object? setupIntentClientSecret = freezed,
     Object? merchantDisplayName = freezed,
     Object? merchantCountryCode = freezed,
+    Object? currencyCode = freezed,
     Object? applePay = freezed,
     Object? style = freezed,
     Object? googlePay = freezed,
+    Object? allowsDelayedPaymentMethods = freezed,
+    Object? primaryButtonColor = freezed,
     Object? testEnv = freezed,
+    Object? billingDetails = freezed,
+    Object? returnURL = freezed,
   }) {
     return _then(_SetupParameters(
       customFlow: customFlow == freezed
@@ -278,6 +380,10 @@ class __$SetupParametersCopyWithImpl<$Res>
           ? _value.merchantCountryCode
           : merchantCountryCode // ignore: cast_nullable_to_non_nullable
               as String?,
+      currencyCode: currencyCode == freezed
+          ? _value.currencyCode
+          : currencyCode // ignore: cast_nullable_to_non_nullable
+              as String?,
       applePay: applePay == freezed
           ? _value.applePay
           : applePay // ignore: cast_nullable_to_non_nullable
@@ -290,10 +396,26 @@ class __$SetupParametersCopyWithImpl<$Res>
           ? _value.googlePay
           : googlePay // ignore: cast_nullable_to_non_nullable
               as bool?,
+      allowsDelayedPaymentMethods: allowsDelayedPaymentMethods == freezed
+          ? _value.allowsDelayedPaymentMethods
+          : allowsDelayedPaymentMethods // ignore: cast_nullable_to_non_nullable
+              as bool,
+      primaryButtonColor: primaryButtonColor == freezed
+          ? _value.primaryButtonColor
+          : primaryButtonColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       testEnv: testEnv == freezed
           ? _value.testEnv
           : testEnv // ignore: cast_nullable_to_non_nullable
               as bool,
+      billingDetails: billingDetails == freezed
+          ? _value.billingDetails
+          : billingDetails // ignore: cast_nullable_to_non_nullable
+              as BillingDetails?,
+      returnURL: returnURL == freezed
+          ? _value.returnURL
+          : returnURL // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -309,22 +431,30 @@ class _$_SetupParameters implements _SetupParameters {
       this.setupIntentClientSecret,
       this.merchantDisplayName,
       this.merchantCountryCode,
+      this.currencyCode,
       this.applePay,
-      @JsonKey(toJson: UserInterfaceStyleKey.toJson) this.style,
+      @JsonKey(toJson: UserInterfaceStyleKey.toJson)
+          this.style,
       this.googlePay,
-      this.testEnv = false});
+      this.allowsDelayedPaymentMethods = false,
+      @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+          this.primaryButtonColor,
+      this.testEnv = false,
+      @BillingDetailsConverter()
+          this.billingDetails,
+      this.returnURL});
 
   factory _$_SetupParameters.fromJson(Map<String, dynamic> json) =>
-      _$_$_SetupParametersFromJson(json);
+      _$$_SetupParametersFromJson(json);
 
-  @JsonKey(defaultValue: false)
+  @JsonKey()
   @override
 
-  ///Whether or not to display a custom flow
+  /// Whether or not to use a custom flow.
   ///
-  /// When value is `false` make sure [PresentPaymentSheetParameters.confirmPayment]
-  /// is set to `true`. If value is set to `true` [PresentPaymentSheetParameters.confirmPayment]
-  /// has to be set to `false`.
+  /// If this value is true, the payment sheet will allow to select a payment method
+  /// and a later confirmation will be needed by calling [confirmPaymentSheetPayment]
+  /// By default, false.
   final bool customFlow;
   @override
 
@@ -357,6 +487,14 @@ class _$_SetupParameters implements _SetupParameters {
   final String? merchantCountryCode;
   @override
 
+  /// Three letter ISO currency code
+  ///
+  /// Must be a supported currency code. See https://stripe.com/docs/currencies for supported currencies.
+  ///
+  /// When [setupIntentClientSecret] is not empty it is required to provide a currencyCode.
+  final String? currencyCode;
+  @override
+
   /// Configuration related to Apple Pay
   /// If set, PaymentSheet displays Apple Pay as a payment option
   /// A merchantCountryCode would then be required
@@ -372,71 +510,94 @@ class _$_SetupParameters implements _SetupParameters {
   /// If set, PaymentSheet displays Google Pay as a payment option
   /// A merchantCountryCode would then be required
   final bool? googlePay;
-  @JsonKey(defaultValue: false)
+  @JsonKey()
+  @override
+
+  /// Flag that allows payment methods that do not move money at the send of the checkout.
+  ///
+  /// Defaul value is false.
+  final bool allowsDelayedPaymentMethods;
+  @override
+
+  /// Button color of the checkoutButton
+  ///
+  /// Make sure that there is enough contrast with the rest of the paymentsheet.
+  @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+  final Color? primaryButtonColor;
+  @JsonKey()
   @override
 
   /// Flag for using the test environment
   final bool testEnv;
+  @override
+
+  /// Billing information of the customer.
+  @BillingDetailsConverter()
+  final BillingDetails? billingDetails;
+  @override
+
+  /// Return URL is required for IDEAL and few other payment methods
+  final String? returnURL;
 
   @override
   String toString() {
-    return 'SetupPaymentSheetParameters(customFlow: $customFlow, customerId: $customerId, customerEphemeralKeySecret: $customerEphemeralKeySecret, paymentIntentClientSecret: $paymentIntentClientSecret, setupIntentClientSecret: $setupIntentClientSecret, merchantDisplayName: $merchantDisplayName, merchantCountryCode: $merchantCountryCode, applePay: $applePay, style: $style, googlePay: $googlePay, testEnv: $testEnv)';
+    return 'SetupPaymentSheetParameters(customFlow: $customFlow, customerId: $customerId, customerEphemeralKeySecret: $customerEphemeralKeySecret, paymentIntentClientSecret: $paymentIntentClientSecret, setupIntentClientSecret: $setupIntentClientSecret, merchantDisplayName: $merchantDisplayName, merchantCountryCode: $merchantCountryCode, currencyCode: $currencyCode, applePay: $applePay, style: $style, googlePay: $googlePay, allowsDelayedPaymentMethods: $allowsDelayedPaymentMethods, primaryButtonColor: $primaryButtonColor, testEnv: $testEnv, billingDetails: $billingDetails, returnURL: $returnURL)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _SetupParameters &&
-            (identical(other.customFlow, customFlow) ||
-                const DeepCollectionEquality()
-                    .equals(other.customFlow, customFlow)) &&
-            (identical(other.customerId, customerId) ||
-                const DeepCollectionEquality()
-                    .equals(other.customerId, customerId)) &&
-            (identical(other.customerEphemeralKeySecret,
-                    customerEphemeralKeySecret) ||
-                const DeepCollectionEquality().equals(
-                    other.customerEphemeralKeySecret,
-                    customerEphemeralKeySecret)) &&
-            (identical(other.paymentIntentClientSecret, paymentIntentClientSecret) ||
-                const DeepCollectionEquality().equals(
-                    other.paymentIntentClientSecret,
-                    paymentIntentClientSecret)) &&
-            (identical(other.setupIntentClientSecret, setupIntentClientSecret) ||
-                const DeepCollectionEquality().equals(
-                    other.setupIntentClientSecret, setupIntentClientSecret)) &&
-            (identical(other.merchantDisplayName, merchantDisplayName) ||
-                const DeepCollectionEquality()
-                    .equals(other.merchantDisplayName, merchantDisplayName)) &&
-            (identical(other.merchantCountryCode, merchantCountryCode) ||
-                const DeepCollectionEquality()
-                    .equals(other.merchantCountryCode, merchantCountryCode)) &&
-            (identical(other.applePay, applePay) ||
-                const DeepCollectionEquality()
-                    .equals(other.applePay, applePay)) &&
-            (identical(other.style, style) ||
-                const DeepCollectionEquality().equals(other.style, style)) &&
-            (identical(other.googlePay, googlePay) ||
-                const DeepCollectionEquality()
-                    .equals(other.googlePay, googlePay)) &&
-            (identical(other.testEnv, testEnv) ||
-                const DeepCollectionEquality().equals(other.testEnv, testEnv)));
+        (other.runtimeType == runtimeType &&
+            other is _SetupParameters &&
+            const DeepCollectionEquality()
+                .equals(other.customFlow, customFlow) &&
+            const DeepCollectionEquality()
+                .equals(other.customerId, customerId) &&
+            const DeepCollectionEquality().equals(
+                other.customerEphemeralKeySecret, customerEphemeralKeySecret) &&
+            const DeepCollectionEquality().equals(
+                other.paymentIntentClientSecret, paymentIntentClientSecret) &&
+            const DeepCollectionEquality().equals(
+                other.setupIntentClientSecret, setupIntentClientSecret) &&
+            const DeepCollectionEquality()
+                .equals(other.merchantDisplayName, merchantDisplayName) &&
+            const DeepCollectionEquality()
+                .equals(other.merchantCountryCode, merchantCountryCode) &&
+            const DeepCollectionEquality()
+                .equals(other.currencyCode, currencyCode) &&
+            const DeepCollectionEquality().equals(other.applePay, applePay) &&
+            const DeepCollectionEquality().equals(other.style, style) &&
+            const DeepCollectionEquality().equals(other.googlePay, googlePay) &&
+            const DeepCollectionEquality().equals(
+                other.allowsDelayedPaymentMethods,
+                allowsDelayedPaymentMethods) &&
+            const DeepCollectionEquality()
+                .equals(other.primaryButtonColor, primaryButtonColor) &&
+            const DeepCollectionEquality().equals(other.testEnv, testEnv) &&
+            const DeepCollectionEquality()
+                .equals(other.billingDetails, billingDetails) &&
+            const DeepCollectionEquality().equals(other.returnURL, returnURL));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(customFlow) ^
-      const DeepCollectionEquality().hash(customerId) ^
-      const DeepCollectionEquality().hash(customerEphemeralKeySecret) ^
-      const DeepCollectionEquality().hash(paymentIntentClientSecret) ^
-      const DeepCollectionEquality().hash(setupIntentClientSecret) ^
-      const DeepCollectionEquality().hash(merchantDisplayName) ^
-      const DeepCollectionEquality().hash(merchantCountryCode) ^
-      const DeepCollectionEquality().hash(applePay) ^
-      const DeepCollectionEquality().hash(style) ^
-      const DeepCollectionEquality().hash(googlePay) ^
-      const DeepCollectionEquality().hash(testEnv);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(customFlow),
+      const DeepCollectionEquality().hash(customerId),
+      const DeepCollectionEquality().hash(customerEphemeralKeySecret),
+      const DeepCollectionEquality().hash(paymentIntentClientSecret),
+      const DeepCollectionEquality().hash(setupIntentClientSecret),
+      const DeepCollectionEquality().hash(merchantDisplayName),
+      const DeepCollectionEquality().hash(merchantCountryCode),
+      const DeepCollectionEquality().hash(currencyCode),
+      const DeepCollectionEquality().hash(applePay),
+      const DeepCollectionEquality().hash(style),
+      const DeepCollectionEquality().hash(googlePay),
+      const DeepCollectionEquality().hash(allowsDelayedPaymentMethods),
+      const DeepCollectionEquality().hash(primaryButtonColor),
+      const DeepCollectionEquality().hash(testEnv),
+      const DeepCollectionEquality().hash(billingDetails),
+      const DeepCollectionEquality().hash(returnURL));
 
   @JsonKey(ignore: true)
   @override
@@ -445,7 +606,7 @@ class _$_SetupParameters implements _SetupParameters {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_SetupParametersToJson(this);
+    return _$$_SetupParametersToJson(this);
   }
 }
 
@@ -458,72 +619,110 @@ abstract class _SetupParameters implements SetupPaymentSheetParameters {
       String? setupIntentClientSecret,
       String? merchantDisplayName,
       String? merchantCountryCode,
+      String? currencyCode,
       bool? applePay,
-      @JsonKey(toJson: UserInterfaceStyleKey.toJson) ThemeMode? style,
+      @JsonKey(toJson: UserInterfaceStyleKey.toJson)
+          ThemeMode? style,
       bool? googlePay,
-      bool testEnv}) = _$_SetupParameters;
+      bool allowsDelayedPaymentMethods,
+      @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+          Color? primaryButtonColor,
+      bool testEnv,
+      @BillingDetailsConverter()
+          BillingDetails? billingDetails,
+      String? returnURL}) = _$_SetupParameters;
 
   factory _SetupParameters.fromJson(Map<String, dynamic> json) =
       _$_SetupParameters.fromJson;
 
   @override
 
-  ///Whether or not to display a custom flow
+  /// Whether or not to use a custom flow.
   ///
-  /// When value is `false` make sure [PresentPaymentSheetParameters.confirmPayment]
-  /// is set to `true`. If value is set to `true` [PresentPaymentSheetParameters.confirmPayment]
-  /// has to be set to `false`.
-  bool get customFlow => throw _privateConstructorUsedError;
+  /// If this value is true, the payment sheet will allow to select a payment method
+  /// and a later confirmation will be needed by calling [confirmPaymentSheetPayment]
+  /// By default, false.
+  bool get customFlow;
   @override
 
   /// The identifier of the Stripe Customer object.
   /// See https://stripe.com/docs/api/customers/object#customer_object-id
-  String? get customerId => throw _privateConstructorUsedError;
+  String? get customerId;
   @override
 
   ///A temp key can be used for API operations that require a secret key.
-  String? get customerEphemeralKeySecret => throw _privateConstructorUsedError;
+  String? get customerEphemeralKeySecret;
   @override
 
   /// Secret used for client-side retrieval using a publishable key.
   ///
   /// If this value is null make sure to add a [setupIntentClientSecret]
-  String? get paymentIntentClientSecret => throw _privateConstructorUsedError;
+  String? get paymentIntentClientSecret;
   @override
 
   /// The client secret of this SetupIntent
   ///
   /// If this value is null make sure to add a [paymentIntentClientSecret]
-  String? get setupIntentClientSecret => throw _privateConstructorUsedError;
+  String? get setupIntentClientSecret;
   @override
 
   /// Display name of the merchant
-  String? get merchantDisplayName => throw _privateConstructorUsedError;
+  String? get merchantDisplayName;
   @override
 
   /// ISO country code of the country where the merchant is located
-  String? get merchantCountryCode => throw _privateConstructorUsedError;
+  String? get merchantCountryCode;
+  @override
+
+  /// Three letter ISO currency code
+  ///
+  /// Must be a supported currency code. See https://stripe.com/docs/currencies for supported currencies.
+  ///
+  /// When [setupIntentClientSecret] is not empty it is required to provide a currencyCode.
+  String? get currencyCode;
   @override
 
   /// Configuration related to Apple Pay
   /// If set, PaymentSheet displays Apple Pay as a payment option
   /// A merchantCountryCode would then be required
-  bool? get applePay => throw _privateConstructorUsedError;
+  bool? get applePay;
   @override
 
   /// Style options for colors in PaymentSheet
   @JsonKey(toJson: UserInterfaceStyleKey.toJson)
-  ThemeMode? get style => throw _privateConstructorUsedError;
+  ThemeMode? get style;
   @override
 
   /// Configuration related to Google Pay
   /// If set, PaymentSheet displays Google Pay as a payment option
   /// A merchantCountryCode would then be required
-  bool? get googlePay => throw _privateConstructorUsedError;
+  bool? get googlePay;
+  @override
+
+  /// Flag that allows payment methods that do not move money at the send of the checkout.
+  ///
+  /// Defaul value is false.
+  bool get allowsDelayedPaymentMethods;
+  @override
+
+  /// Button color of the checkoutButton
+  ///
+  /// Make sure that there is enough contrast with the rest of the paymentsheet.
+  @JsonKey(toJson: ColorKey.toJson, fromJson: ColorKey.fromJson)
+  Color? get primaryButtonColor;
   @override
 
   /// Flag for using the test environment
-  bool get testEnv => throw _privateConstructorUsedError;
+  bool get testEnv;
+  @override
+
+  /// Billing information of the customer.
+  @BillingDetailsConverter()
+  BillingDetails? get billingDetails;
+  @override
+
+  /// Return URL is required for IDEAL and few other payment methods
+  String? get returnURL;
   @override
   @JsonKey(ignore: true)
   _$SetupParametersCopyWith<_SetupParameters> get copyWith =>
@@ -547,7 +746,7 @@ class _$PresentPaymentSheetParametersTearOff {
     );
   }
 
-  PresentPaymentSheetParameters fromJson(Map<String, Object> json) {
+  PresentPaymentSheetParameters fromJson(Map<String, Object?> json) {
     return PresentPaymentSheetParameters.fromJson(json);
   }
 }
@@ -657,13 +856,13 @@ class _$_PresentParameters implements _PresentParameters {
       {required this.clientSecret, this.confirmPayment = false});
 
   factory _$_PresentParameters.fromJson(Map<String, dynamic> json) =>
-      _$_$_PresentParametersFromJson(json);
+      _$$_PresentParametersFromJson(json);
 
   @override
 
   /// Key used for client-side retrieval using a publishable key.
   final String clientSecret;
-  @JsonKey(defaultValue: false)
+  @JsonKey()
   @override
 
   /// Flag that determines whether or not to present payment options or
@@ -683,20 +882,19 @@ class _$_PresentParameters implements _PresentParameters {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _PresentParameters &&
-            (identical(other.clientSecret, clientSecret) ||
-                const DeepCollectionEquality()
-                    .equals(other.clientSecret, clientSecret)) &&
-            (identical(other.confirmPayment, confirmPayment) ||
-                const DeepCollectionEquality()
-                    .equals(other.confirmPayment, confirmPayment)));
+        (other.runtimeType == runtimeType &&
+            other is _PresentParameters &&
+            const DeepCollectionEquality()
+                .equals(other.clientSecret, clientSecret) &&
+            const DeepCollectionEquality()
+                .equals(other.confirmPayment, confirmPayment));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(clientSecret) ^
-      const DeepCollectionEquality().hash(confirmPayment);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(clientSecret),
+      const DeepCollectionEquality().hash(confirmPayment));
 
   @JsonKey(ignore: true)
   @override
@@ -705,7 +903,7 @@ class _$_PresentParameters implements _PresentParameters {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_PresentParametersToJson(this);
+    return _$$_PresentParametersToJson(this);
   }
 }
 
@@ -720,7 +918,7 @@ abstract class _PresentParameters implements PresentPaymentSheetParameters {
   @override
 
   /// Key used for client-side retrieval using a publishable key.
-  String get clientSecret => throw _privateConstructorUsedError;
+  String get clientSecret;
   @override
 
   /// Flag that determines whether or not to present payment options or
@@ -730,7 +928,7 @@ abstract class _PresentParameters implements PresentPaymentSheetParameters {
   /// is set to `true` when initializing the payment sheet.
   /// If value is set to `true` [SetupPaymentSheetParameters.customFlow]
   /// has to be set to `false` when initializing the payment sheet.
-  bool get confirmPayment => throw _privateConstructorUsedError;
+  bool get confirmPayment;
   @override
   @JsonKey(ignore: true)
   _$PresentParametersCopyWith<_PresentParameters> get copyWith =>

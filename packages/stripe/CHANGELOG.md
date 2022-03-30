@@ -1,3 +1,70 @@
+## 2.4.0
+- Add support for paying with Klarna.
+- Several fixes by the Stripe sdk [v0.4.0](https://github.com/stripe/stripe-react-native/releases/tag/v0.4.0)
+- Fix [#632](https://github.com/flutter-stripe/flutter_stripe/issues/632) added return_url to payment sheet. Needed for Ideal payments
+- Fix [#185](https://github.com/flutter-stripe/flutter_stripe/issues/185) make sure that address will be added to the payment intent. 
+
+## 2.3.0
+- add isGooglePaySupported method
+- reenable support for legacy bank account token creation
+- Several fixes by the Stripe sdk [v0.3.0](https://github.com/stripe/stripe-react-native/releases/tag/v0.3.0)
+
+## 2.2.0
+
+- Add currency code to the Paymentsheet
+- Add validation state to cardfield
+- Deprecated `CreatetokenParams` use `CreateTokenParams.card` instead
+- Several fixes by the Stripe sdk [v0.2.4](https://github.com/stripe/stripe-react-native/releases/tag/v0.2.4)
+- Fix [#416](https://github.com/flutter-stripe/flutter_stripe/issues/416) ocassional crash on Android on the Paymentsheetfragment
+
+## 2.1.1
+
+- Improved logging for Android initialization
+- Fix [#494](https://github.com/flutter-stripe/flutter_stripe/issues/494) Make `ShippingDetails` parameters nullable
+- Fix [#499](https://github.com/flutter-stripe/flutter_stripe/issues/499) Update cardnumber when using `dangerouslyGetFullCardDetails`
+
+## 2.1.0
+
+** Enabled web support (Beta) **
+
+Other changes
+- Integrated native form to collect Aubecs payment data
+- Add Button Border-Radius for Apple Pay Button #448
+- Update dependencies to comply to new Flutter and dart release
+- Add billing name for future payments #441
+
+## 2.0.2
+
+- New params `primaryButtonColor`, `billingDetails` and `allowsDelayedPaymentMethods` for `initPaymentSheet`
+- Fixed iOS focus issues #408
+
+## 2.0.1
+
+ - **FIX**: focus issue on CardFormField on Android. #397
+ - **DOCS**: correct AppCompat mention in README.md. #392
+
+## 2.0.0
+** First stable release **
+
+** Breaking changes ** 
+- Temporarily disable Wechat
+
+Other changes
+- add openApplePaySetup method
+- several fixes by Stripe SDK ([v0.2.1](https://github.com/stripe/stripe-react-native/releases/tag/v0.2.1), [v0.2.2](https://github.com/stripe/stripe-react-native/releases/tag/v0.2.2))
+- Focus issues on Android #14 are fixed
+
+## 1.3.0
+
+** BREAKING CHANGES **
+- Deprecate redundant parameters for payment sheet.
+
+Other changes 
+- Add new multiline card form.
+- Add Stripe Google pay integration.
+- Add WeChat payment method.
+- Improved example app.
+
 ## 1.2.0
 
 ** Breaking changes **

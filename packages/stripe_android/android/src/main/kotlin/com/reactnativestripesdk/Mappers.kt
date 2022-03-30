@@ -1,5 +1,7 @@
 package com.reactnativestripesdk
 
+import android.os.Bundle
+import android.util.Log
 import com.facebook.react.bridge.*
 import com.stripe.android.PaymentAuthConfig
 import com.stripe.android.model.*
@@ -100,6 +102,8 @@ internal fun mapPaymentMethodType(type: PaymentMethod.Type?): String {
     PaymentMethod.Type.SepaDebit -> "SepaDebit"
     PaymentMethod.Type.Sofort -> "Sofort"
     PaymentMethod.Type.Upi -> "Upi"
+    PaymentMethod.Type.WeChatPay -> "WeChatPay"
+    PaymentMethod.Type.Klarna -> "Klarna"
     else -> "Unknown"
   }
 }
@@ -124,6 +128,8 @@ internal fun mapToPaymentMethodType(type: String?): PaymentMethod.Type? {
     "SepaDebit" -> PaymentMethod.Type.SepaDebit
     "Sofort" -> PaymentMethod.Type.Sofort
     "Upi" -> PaymentMethod.Type.Upi
+    "WeChatPay" -> PaymentMethod.Type.WeChatPay
+    "Klarna" -> PaymentMethod.Type.Klarna
     else -> null
   }
 }
@@ -164,6 +170,14 @@ internal fun mapFromBankAccountType(type: BankAccount.Type?): String {
     BankAccount.Type.Company -> "Company"
     BankAccount.Type.Individual -> "Individual"
     else -> "Unknown"
+  }
+}
+
+internal fun mapToBankAccountType(type: String?): BankAccountTokenParams.Type {
+  return when (type) {
+    "Company" -> BankAccountTokenParams.Type.Company
+    "Individual" -> BankAccountTokenParams.Type.Individual
+    else -> BankAccountTokenParams.Type.Individual
   }
 }
 
@@ -391,22 +405,32 @@ fun getValOr(map: ReadableMap?, key: String, default: String? = ""): String? {
   return if (map.hasKey(key)) map.getString(key) else default
 }
 
-internal fun mapToAddress(addressMap: ReadableMap?): Address? {
+internal fun mapToAddress(addressMap: ReadableMap?, cardAddress: Address?): Address? {
   if (addressMap == null) {
     return null
   }
-  return Address.Builder()
+  val address = Address.Builder()
     .setPostalCode(getValOr(addressMap, "postalCode"))
     .setCity(getValOr(addressMap, "city"))
     .setCountry(getValOr(addressMap, "country"))
     .setLine1(getValOr(addressMap, "line1"))
     .setLine2(getValOr(addressMap, "line2"))
     .setState(getValOr(addressMap, "state"))
-    .build()
+
+    cardAddress?.let { ca ->
+      ca.postalCode?.let {
+        address.setPostalCode(it)
+      }
+      ca.country?.let {
+        address.setCountry(it)
+      }
+    }
+
+  return address.build()
 }
 
-internal fun mapToBillingDetails(billingDetails: ReadableMap?): PaymentMethod.BillingDetails? {
-  if (billingDetails == null) {
+internal fun mapToBillingDetails(billingDetails: ReadableMap?, cardAddress: Address?): PaymentMethod.BillingDetails? {
+  if (billingDetails == null && cardAddress == null) {
     return null
   }
 
@@ -702,4 +726,29 @@ fun mapToPaymentIntentFutureUsage(type: String?): ConfirmPaymentIntentParams.Set
     "OnSession" ->  ConfirmPaymentIntentParams.SetupFutureUsage.OnSession
     else ->  null
   }
+}
+
+fun toBundleObject(readableMap: ReadableMap?): Bundle? {
+  val result = Bundle()
+  if (readableMap == null) {
+    return result
+  }
+  val iterator = readableMap.keySetIterator()
+  while (iterator.hasNextKey()) {
+    val key = iterator.nextKey()
+    when (readableMap.getType(key)) {
+      ReadableType.Null -> result.putString(key, null)
+      ReadableType.Boolean -> result.putBoolean(key, readableMap.getBoolean(key))
+      ReadableType.Number -> try {
+        result.putInt(key, readableMap.getInt(key))
+      } catch (e: Exception) {
+        result.putDouble(key, readableMap.getDouble(key))
+      }
+      ReadableType.String -> result.putString(key, readableMap.getString(key))
+      ReadableType.Map -> result.putBundle(key, toBundleObject(readableMap.getMap(key)))
+      ReadableType.Array -> Log.e("toBundleException", "Cannot put arrays of objects into bundles. Failed on: $key.")
+      else -> Log.e("toBundleException", "Could not convert object with key: $key.")
+    }
+  }
+  return result
 }

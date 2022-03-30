@@ -8,8 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.NonNull
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.ThemedReactContext
-import com.reactnativestripesdk.StripeSdkCardView
-import com.reactnativestripesdk.StripeSdkCardViewManager
+import com.reactnativestripesdk.*
 import com.stripe.android.databinding.CardInputWidgetBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -18,21 +17,21 @@ import io.flutter.plugin.platform.PlatformView
 
 class StripeSdkCardPlatformView(
         private val context: Context,
-        private val channel: MethodChannel,
+        channel: MethodChannel,
         id: Int,
-        private val creationParams: Map<String?, Any?>?,
-        private val stripeSdkCardViewManager: StripeSdkCardViewManager
+        creationParams: Map<String?, Any?>?,
+        private val stripeSdkCardViewManager: StripeSdkCardViewManager,
+        sdkAccessor: () -> StripeSdkModule
 ) : PlatformView, MethodChannel.MethodCallHandler {
 
-    lateinit var cardView: StripeSdkCardView
+    private val themedContext = ThemedReactContext(context, channel, sdkAccessor)
+    private val cardView: StripeSdkCardView = stripeSdkCardViewManager.getCardViewInstance() ?: let {
+        return@let stripeSdkCardViewManager.createViewInstance(themedContext)
+    }
 
     init {
-        cardView =  stripeSdkCardViewManager.getCardViewInstance() ?: let {
-            return@let stripeSdkCardViewManager.createViewInstance(ThemedReactContext(context, channel))
-        }
         channel.setMethodCallHandler(this)
         if (creationParams?.containsKey("cardStyle") == true) {
-            val cardStyle =
             stripeSdkCardViewManager.setCardStyle(cardView, ReadableMap(creationParams["cardStyle"] as Map<String, Any>))
         }
         if (creationParams?.containsKey("placeholder") == true) {
@@ -46,6 +45,30 @@ class StripeSdkCardPlatformView(
         }
         if (creationParams?.containsKey("autofocus") == true) {
             stripeSdkCardViewManager.setAutofocus(cardView, creationParams["autofocus"] as Boolean)
+        }
+        if (creationParams?.containsKey("cardDetails") == true) {
+            val value = ReadableMap(creationParams["cardDetails"] as Map<String, Any>)
+            stripeSdkCardViewManager.setCardDetails(value, themedContext)
+
+            val binding = CardInputWidgetBinding.bind(cardView.mCardWidget)
+            val number = getValOr(value, "number", null)
+            val expirationYear = getIntOrNull(value, "expiryYear")
+            val expirationMonth = getIntOrNull(value, "expiryMonth")
+            val cvc = getValOr(value, "cvc", null)
+            number?.let {
+                binding.cardNumberEditText.setText(it)
+            }
+            if (expirationYear != null && expirationMonth != null) {
+                binding.expiryDateEditText.setText(
+                    listOf(
+                        expirationMonth.toString().padStart(2, '0'),
+                        expirationYear.toString().takeLast(2).padStart(2, '0')
+                    ).joinToString(separator = "/")
+                )
+            }
+            cvc?.let {
+                binding.cvcEditText.setText(it)
+            }
         }
         applyFocusFix()
     }
@@ -119,7 +142,7 @@ class StripeSdkCardPlatformView(
             "clearFocus" -> {
                 // Hide keyboard
                 val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(cardView.getWindowToken(), 0)
+                imm.hideSoftInputFromWindow(cardView.windowToken, 0)
                 // Clear focus
                 cardView.clearFocus()
                 result.success(null)
@@ -128,4 +151,7 @@ class StripeSdkCardPlatformView(
         }
     }
 
+    override fun onFlutterViewAttached(flutterView: View) {
+        stripeSdkCardViewManager.onAfterUpdateTransaction(cardView)
+    }
 }

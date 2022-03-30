@@ -1,13 +1,11 @@
 package com.reactnativestripesdk
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.ThemedReactContext
@@ -17,15 +15,18 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.stripe.android.databinding.CardInputWidgetBinding
+import com.stripe.android.model.Address
 import com.stripe.android.model.PaymentMethodCreateParams
 import com.stripe.android.view.CardInputListener
 import com.stripe.android.view.CardInputWidget
+import com.stripe.android.view.CardValidCallback
 
 
 class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(context) {
-  var mCardWidget: CardInputWidget
-  val cardDetails: MutableMap<String, Any?> = mutableMapOf("brand" to "", "last4" to "", "expiryMonth" to null, "expiryYear" to null, "postalCode" to "")
+  internal var mCardWidget: CardInputWidget
+  val cardDetails: MutableMap<String, Any?> = mutableMapOf("brand" to "", "last4" to "", "expiryMonth" to null, "expiryYear" to null, "postalCode" to "", "validNumber" to "Unknown", "validCVC" to "Unknown", "validExpiryDate" to "Unknown")
   var cardParams: PaymentMethodCreateParams.Card? = null
+  var cardAddress: Address? = null
   private var mEventDispatcher: EventDispatcher?
   private var dangerouslyGetFullCardDetails: Boolean = false
 
@@ -86,36 +87,45 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
     val fontFamily = getValOr(value, "fontFamily")
     val placeholderColor = getValOr(value, "placeholderColor", null)
     val textErrorColor = getValOr(value, "textErrorColor", null)
+    val cursorColor = getValOr(value, "cursorColor", null)
+    val bindings = setOf(binding.cardNumberEditText, binding.cvcEditText, binding.expiryDateEditText, binding.postalCodeEditText)
 
     textColor?.let {
-      binding.cardNumberEditText.setTextColor(Color.parseColor(it))
-      binding.cvcEditText.setTextColor(Color.parseColor(it))
-      binding.expiryDateEditText.setTextColor(Color.parseColor(it))
-      binding.postalCodeEditText.setTextColor(Color.parseColor(it))
+      for (editTextBinding in bindings) {
+        editTextBinding.setTextColor(Color.parseColor(it))
+      }
     }
     textErrorColor?.let {
-      binding.cardNumberEditText.setErrorColor(Color.parseColor(it))
-      binding.cvcEditText.setErrorColor(Color.parseColor(it))
-      binding.expiryDateEditText.setErrorColor(Color.parseColor(it))
-      binding.postalCodeEditText.setErrorColor(Color.parseColor(it))
+      for (editTextBinding in bindings) {
+        editTextBinding.setErrorColor(Color.parseColor(it))
+      }
     }
     placeholderColor?.let {
-      binding.cardNumberEditText.setHintTextColor(Color.parseColor(it))
-      binding.cvcEditText.setHintTextColor(Color.parseColor(it))
-      binding.expiryDateEditText.setHintTextColor(Color.parseColor(it))
-      binding.postalCodeEditText.setHintTextColor(Color.parseColor(it))
+      for (editTextBinding in bindings) {
+        editTextBinding.setHintTextColor(Color.parseColor(it))
+      }
     }
     fontSize?.let {
-      binding.cardNumberEditText.textSize = it.toFloat()
-      binding.cvcEditText.textSize = it.toFloat()
-      binding.expiryDateEditText.textSize = it.toFloat()
-      binding.postalCodeEditText.textSize = it.toFloat()
+      for (editTextBinding in bindings) {
+        editTextBinding.textSize = it.toFloat()
+      }
     }
     fontFamily?.let {
-      binding.cardNumberEditText.typeface = Typeface.create(it, Typeface.NORMAL)
-      binding.cvcEditText.typeface = Typeface.create(it, Typeface.NORMAL)
-      binding.expiryDateEditText.typeface = Typeface.create(it, Typeface.NORMAL)
-      binding.postalCodeEditText.typeface = Typeface.create(it, Typeface.NORMAL)
+      for (editTextBinding in bindings) {
+        editTextBinding.typeface = Typeface.create(it, Typeface.NORMAL)
+      }
+    }
+    cursorColor?.let {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val color = Color.parseColor(it)
+        for (editTextBinding in bindings) {
+          editTextBinding.textCursorDrawable?.setTint(color)
+          editTextBinding.textSelectHandle?.setTint(color)
+          editTextBinding.textSelectHandleLeft?.setTint(color)
+          editTextBinding.textSelectHandleRight?.setTint(color)
+          editTextBinding.highlightColor = color
+        }
+      }
     }
 
     mCardWidget.setPadding(40, 0, 40, 0)
@@ -173,10 +183,17 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
     return cardDetails
   }
 
-  fun onCardChanged() {
-    mCardWidget.paymentMethodCard?.let { cardParams = it } ?: run {
+  fun onValidCardChange() {
+    mCardWidget.paymentMethodCard?.let {
+      cardParams = it
+      cardAddress = Address.Builder()
+        .setPostalCode(cardDetails["postalCode"] as String?)
+        .build()
+    } ?: run {
       cardParams = null
+      cardAddress = null
     }
+
     mCardWidget.cardParams?.let {
       cardDetails["brand"] = mapCardBrand(it.brand)
       cardDetails["last4"] = it.last4
@@ -184,15 +201,32 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
       cardDetails["brand"] = null
       cardDetails["last4"] = null
     }
+    sendCardDetailsEvent()
+  }
+
+  private fun sendCardDetailsEvent() {
     mEventDispatcher?.dispatchEvent(
       CardChangedEvent(id, cardDetails, mCardWidget.postalCodeEnabled, cardParams != null, dangerouslyGetFullCardDetails))
   }
 
   private fun setListeners() {
+    mCardWidget.setCardValidCallback { isValid, invalidFields ->
+      cardDetails["validNumber"] = if (invalidFields.contains(CardValidCallback.Fields.Number)) "Invalid" else "Valid"
+      cardDetails["validCVC"] = if (invalidFields.contains(CardValidCallback.Fields.Cvc)) "Invalid" else "Valid"
+      cardDetails["validExpiryDate"] = if (invalidFields.contains(CardValidCallback.Fields.Expiry)) "Invalid" else "Valid"
+      if (isValid) {
+        onValidCardChange()
+      } else {
+        cardParams = null
+        cardAddress = null
+      }
+    }
+
     mCardWidget.setCardInputListener(object : CardInputListener {
       override fun onCardComplete() {}
       override fun onExpirationComplete() {}
       override fun onCvcComplete() {}
+      override fun onPostalCodeComplete() {}
 
       override fun onFocusChange(focusField: CardInputListener.FocusField) {
         if (mEventDispatcher != null) {
@@ -213,7 +247,7 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
           cardDetails["expiryYear"] = var1.toString().split("/")[1].toIntOrNull()
         }
 
-        onCardChanged()
+        sendCardDetailsEvent()
       }
     })
 
@@ -222,7 +256,7 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
       override fun afterTextChanged(p0: Editable?) {}
       override fun onTextChanged(var1: CharSequence?, var2: Int, var3: Int, var4: Int) {
         cardDetails["postalCode"] = var1.toString()
-        onCardChanged()
+        sendCardDetailsEvent()
       }
     })
 
@@ -233,7 +267,7 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
         if (dangerouslyGetFullCardDetails) {
           cardDetails["number"] = var1.toString().replace(" ", "")
         }
-        onCardChanged()
+        sendCardDetailsEvent()
       }
     })
 
@@ -241,7 +275,7 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
       override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
       override fun afterTextChanged(p0: Editable?) {}
       override fun onTextChanged(var1: CharSequence?, var2: Int, var3: Int, var4: Int) {
-        onCardChanged()
+        sendCardDetailsEvent()
       }
     })
   }
@@ -256,23 +290,5 @@ class StripeSdkCardView(private val context: ThemedReactContext) : FrameLayout(c
       MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
       MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY))
     layout(left, top, right, bottom)
-  }
-}
-
-fun View.showSoftKeyboard() {
-  post {
-    if (this.requestFocus()) {
-      val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-      imm?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
-    }
-  }
-}
-
-fun View.hideSoftKeyboard() {
-  post {
-    if (this.requestFocus()) {
-      val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-      imm?.hideSoftInputFromWindow(windowToken, 0)
-    }
   }
 }
